@@ -3,60 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro - TecnoPan</title>
+    <title>Cadastro - RCB Investimentos</title>
     <link href="https://jsdelivr.net" rel="stylesheet">
     <style>
         body { background-color: #f1f3f5; min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Segoe UI', sans-serif; }
-        .card-cadastro { border: none; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 550px; background: white; padding: 30px; }
-        .btn-cadastro { background-color: #1e3c72; color: white; font-weight: bold; border: none; padding: 12px; border-radius: 10px; width: 100%; transition: 0.3s; }
-        .btn-cadastro:hover { background-color: #2a5298; color: white; }
+        .card-cadastro { border: none; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 550px; background: white; padding: 30px; transition: 0.3s; }
+        .btn-cadastro { background-color: #010e21; color: white; font-weight: bold; border: none; padding: 12px; border-radius: 10px; width: 100%; transition: 0.3s; }
+        .btn-cadastro:hover { background-color: #caa252; color: #010e21; }
+        .text-dourado { color: #caa252; }
     </style>
 </head>
 <body>
 
-    <div class="card-cadastro m-3">
-        <h3 class="text-center fw-bold mb-2 text-dark">Crie sua Conta</h3>
-        <p class="text-center text-muted small mb-4">Insira seus dados para começar a renderizar seu capital.</p>
+    <div class="card-cadastro m-3" id="conteudoCard">
+        <!-- O formulário de cadastro começa aqui -->
+        <div id="areaFormulario">
+            <h3 class="text-center fw-bold mb-2 text-dark">Crie sua Conta</h3>
+            <p class="text-center text-muted small mb-4">Insira seus dados para começar a renderizar seu capital na <span class="fw-bold text-dark">RCB</span>.</p>
 
-        <form id="formCadastro">
-            <div class="mb-3">
-                <label class="form-label small fw-bold">Nome Completo</label>
-                <input type="text" class="form-control" id="nome" placeholder="Digite seu nome completo" required>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label small fw-bold">CPF</label>
-                    <input type="text" class="form-control" id="cpf" placeholder="000.000.000-00" maxlength="14" required>
+            <form id="formCadastro">
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Nome Completo</label>
+                    <input type="text" class="form-control" id="nome" placeholder="Digite seu nome completo" required>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label small fw-bold">Telefone</label>
-                    <input type="text" class="form-control" id="telefone" placeholder="(00) 00000-0000" maxlength="15" required>
-                </div>
-            </div>
 
-            <div class="row">
-                <div class="col-md-5 mb-3">
-                    <label class="form-label small fw-bold">CEP</label>
-                    <input type="text" class="form-control" id="cep" placeholder="00000-000" maxlength="9" required>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small fw-bold">CPF</label>
+                        <input type="text" class="form-control" id="cpf" placeholder="000.000.000-00" maxlength="14" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small fw-bold">Telefone</label>
+                        <input type="text" class="form-control" id="telefone" placeholder="(00) 00000-0000" maxlength="15" required>
+                    </div>
                 </div>
-                <div class="col-md-7 mb-3">
-                    <label class="form-label small fw-bold">E-mail</label>
-                    <input type="email" class="form-control" id="email" placeholder="seuemail@provedor.com" required>
+
+                <div class="row">
+                    <div class="col-md-5 mb-3">
+                        <label class="form-label small fw-bold">CEP</label>
+                        <input type="text" class="form-control" id="cep" placeholder="00000-000" maxlength="9" required>
+                    </div>
+                    <div class="col-md-7 mb-3">
+                        <label class="form-label small fw-bold">E-mail</label>
+                        <input type="email" class="form-control" id="email" placeholder="seuemail@provedor.com" required>
+                    </div>
                 </div>
-            </div>
 
-            <div class="mb-4">
-                <label class="form-label small fw-bold">Senha de Acesso</label>
-                <input type="password" class="form-control" id="senha" placeholder="Crie uma senha segura" required>
-            </div>
+                <div class="mb-4">
+                    <label class="form-label small fw-bold">Senha de Acesso</label>
+                    <input type="password" class="form-control" id="senha" placeholder="Crie uma senha segura" required>
+                </div>
 
-            <button type="submit" class="btn-cadastro mb-3" id="btnEnviar">Concluir Cadastro</button>
-            
-            <div class="text-center">
-                <a href="index.html" class="text-decoration-none small text-secondary">← Voltar para o Simulador</a>
-            </div>
-        </form>
+                <button type="submit" class="btn-cadastro mb-3" id="btnEnviar">Concluir Cadastro</button>
+                
+                <div class="text-center">
+                    <a href="index.html" class="text-decoration-none small text-secondary">← Voltar para o Simulador</a>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script>
@@ -79,7 +83,7 @@
             btn.innerText = "Processando cadastro...";
             btn.disabled = true;
 
-            // Substitua as aspas abaixo pelo seu link de Implantação do Google Apps Script
+            // COLOQUE SEU LINK DO GOOGLE APPS SCRIPT ABAIXO
             const URL_API_GOOGLE = "https://script.google.com/macros/library/d/12HHrRalQZ9FwcjhzExmq-FQjFKMZdWwG-QbxwRsY5A39RnIOwtodjszB/4";
 
             const dadosFormulario = {
@@ -92,21 +96,32 @@
             };
 
             try {
-                const resposta = await fetch(URL_API_GOOGLE, {
+                await fetch(URL_API_GOOGLE, {
                     method: 'POST',
                     mode: 'no-cors', 
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(dadosFormulario)
                 });
 
-                alert("Cadastro realizado com sucesso! Aguarde a aprovação do administrador.");
-                document.getElementById('formCadastro').reset();
-                window.location.href = "aportes.html"; // Joga o usuário automaticamente para a tela 3 após cadastrar
+                // TELA DE SUCESSO CUSTOMIZADA (Substitui o formulário na tela do cliente)
+                document.getElementById('conteudoCard').innerHTML = `
+                    <div class="text-center py-4">
+                        <div class="mb-4" style="font-size: 4rem;">🎉</div>
+                        <h3 class="fw-bold text-dark mb-3">Cadastro Realizado com Sucesso!</h3>
+                        <p class="text-secondary mb-4" style="line-height: 1.6;">
+                            Seus dados foram encaminhados para a nossa equipe administrativa. 
+                            Nossa auditoria analisará as informações em breve para liberar o acesso total à sua conta de rendimentos.
+                        </p>
+                        <p class="text-muted small mb-4">Obrigado por escolher a <span class="fw-bold text-dark">RCB Investimentos</span>.</p>
+                        <div class="d-grid">
+                            <a href="aportes.html" class="btn btn-dark fw-bold py-2 rounded-3" style="background-color: #010e21; border: none;">Visualizar Planos de Aporte →</a>
+                        </div>
+                    </div>
+                `;
                 
             </div> catch (erro) {
                 alert("Erro ao conectar com o servidor. Tente novamente.");
                 console.error(erro);
-            } finally {
                 btn.innerText = "Concluir Cadastro";
                 btn.disabled = false;
             }
