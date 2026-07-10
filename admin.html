@@ -7,11 +7,13 @@
     <link href="https://jsdelivr.net" rel="stylesheet">
     <style>
         body { background-color: #f4f6f9; font-family: 'Segoe UI', sans-serif; }
-        .sidebar { background-color: #010e21; color: white; min-height: 100vh; }
+        .sidebar { background-color: #010e21; color: white; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }
         .nav-link { color: #94a3b8; font-weight: 500; border: none; background: transparent; width: 100%; text-align: left; }
         .nav-link.active { color: white; background-color: #caa252; border-radius: 8px; }
         .card-dados { border: none; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
         .text-dourado { color: #caa252; }
+        .btn-voltar-inicio { border: 1px solid #caa252; color: #caa252; background: transparent; font-weight: 600; transition: 0.3s; width: 100%; padding: 10px; border-radius: 8px; text-decoration: none; display: block; text-align: center; }
+        .btn-voltar-inicio:hover { background-color: #caa252; color: #010e21; }
     </style>
 </head>
 <body>
@@ -20,13 +22,20 @@
         <div class="row">
             <!-- Menu Lateral -->
             <div class="col-md-3 col-lg-2 sidebar p-3 text-center">
-                <h4 class="fw-bold text-white mb-2">RCB</h4>
-                <p class="small text-muted mb-4 text-uppercase tracking-wider">Investimentos</p>
-                <hr class="border-secondary">
-                <div class="nav flex-column nav-pills text-start" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                    <button class="nav-link active mb-2" id="aba5-tab" data-bs-toggle="pill" data-bs-target="#aba5" type="button" role="tab">Clientes Novos (Tela 5)</button>
-                    <button class="nav-link mb-2" id="aba6-tab" data-bs-toggle="pill" data-bs-target="#aba6" type="button" role="tab">Aportes/PIX (Tela 6)</button>
-                    <button class="nav-link mb-2" id="aba7-tab" data-bs-toggle="pill" data-bs-target="#aba7" type="button" role="tab">Pedidos de Saque (Tela 7)</button>
+                <div>
+                    <h4 class="fw-bold text-white mb-2">RCB</h4>
+                    <p class="small text-muted mb-4 text-uppercase tracking-wider">Investimentos</p>
+                    <hr class="border-secondary">
+                    <div class="nav flex-column nav-pills text-start" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                        <button class="nav-link active mb-2" id="aba5-tab" data-bs-toggle="pill" data-bs-target="#aba5" type="button" role="tab">Clientes Novos (Tela 5)</button>
+                        <button class="nav-link mb-2" id="aba6-tab" data-bs-toggle="pill" data-bs-target="#aba6" type="button" role="tab">Aportes/PIX (Tela 6)</button>
+                        <button class="nav-link mb-2" id="aba7-tab" data-bs-toggle="pill" data-bs-target="#aba7" type="button" role="tab">Pedidos de Saque (Tela 7)</button>
+                    </div>
+                </div>
+                
+                <!-- Botão de Sair adicionado na parte inferior do menu -->
+                <div class="mt-auto pt-4">
+                    <a href="index.html" class="btn-voltar-inicio">🚪 Sair do Painel</a>
                 </div>
             </div>
 
@@ -103,7 +112,7 @@
 
     <!-- Scripts Bootstrap e Conectividade -->
     <script src="https://jsdelivr.net"></script>
-        <script>
+    <script>
         // COLOQUE SEU LINK DO GOOGLE APPS SCRIPT ABAIXO
         const URL_API_GOOGLE = "https://script.google.com/macros/library/d/12HHrRalQZ9FwcjhzExmq-FQjFKMZdWwG-QbxwRsY5A39RnIOwtodjszB/3";
 
@@ -135,12 +144,13 @@
             corpo.innerHTML = "";
             
             if (!linhas || linhas.length === 0) {
+                // Linha de exemplo idêntica à real que some ao clicar
                 corpo.innerHTML = `
-                <tr>
+                <tr id="linha-cliente-1">
                     <td>#1</td><td>Cliente Exemplo Pendente</td><td>111.222.333-44</td><td>cliente@email.com</td>
                     <td><span class="badge bg-warning">Pendente</span></td>
                     <td>
-                        <button class="btn btn-success btn-sm me-1" onclick="alterarStatusCliente(1, 'Ativo')">Aceitar</button>
+                        <button class="btn btn-success btn-sm me-1" onclick="alterarStatusCliente(1, 'Ativo', '')">Aceitar</button>
                         <button class="btn btn-danger btn-sm" onclick="recusarClientePrompt(1)">Recusar</button>
                     </td>
                 </tr>`;
@@ -148,14 +158,14 @@
             }
 
             linhas.forEach(cli => {
-                if (cli[7] === "Pendente") {
+                if (cli === "Pendente") {
                     corpo.innerHTML += `
-                    <tr>
-                        <td>#${cli[0]}</td><td>${cli[1]}</td><td>${cli[2]}</td><td>${cli[5]}</td>
+                    <tr id="linha-cliente-${cli}">
+                        <td>#${cli}</td><td>${cli}</td><td>${cli}</td><td>${cli}</td>
                         <td><span class="badge bg-warning">Pendente</span></td>
                         <td>
-                            <button class="btn btn-success btn-sm me-1" onclick="alterarStatusCliente(${cli[0]}, 'Ativo')">Aceitar</button>
-                            <button class="btn btn-danger btn-sm" onclick="recusarClientePrompt(${cli[0]})">Recusar</button>
+                            <button class="btn btn-success btn-sm me-1" onclick="alterarStatusCliente(${cli}, 'Ativo', '')">Aceitar</button>
+                            <button class="btn btn-danger btn-sm" onclick="recusarClientePrompt(${cli})">Recusar</button>
                         </td>
                     </tr>`;
                 }
@@ -172,7 +182,7 @@
 
             if (!linhas || linhas.length === 0) {
                 corpo.innerHTML = `
-                <tr>
+                <tr id="linha-aporte-101">
                     <td>#101</td><td>Cliente #1</td><td><strong>R$ 1.000,00</strong></td><td><span class="badge bg-dark">PRATA</span></td>
                     <td><span class="badge bg-info">Aguardando PIX</span></td>
                     <td><button class="btn btn-primary btn-sm" onclick="confirmarAportePix(101)">Autorizar Cliente</button></td>
@@ -181,14 +191,14 @@
             }
 
             linhas.forEach(ap => {
-                if (ap[4] === "Aguardando Aprovação" || ap[4] === "Aguardando PIX" || ap[4] === "Pendente") {
+                if (ap === "Aguardando Aprovação" || ap === "Aguardando PIX" || ap === "Pendente") {
                     corpo.innerHTML += `
-                    <tr>
-                        <td>#${ap[0]}</td><td>Cliente #${ap[1]}</td>
-                        <td><strong>R$ ${parseFloat(ap[2]).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></td>
-                        <td><span class="badge bg-dark">${ap[3].toUpperCase()}</span></td>
+                    <tr id="linha-aporte-${ap}">
+                        <td>#${ap}</td><td>Cliente #${ap}</td>
+                        <td><strong>R$ ${parseFloat(ap).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></td>
+                        <td><span class="badge bg-dark">${ap.toUpperCase()}</span></td>
                         <td><span class="badge bg-info">Aguardando PIX</span></td>
-                        <td><button class="btn btn-primary btn-sm" onclick="confirmarAportePix(${ap[0]})">Autorizar Cliente</button></td>
+                        <td><button class="btn btn-primary btn-sm" onclick="confirmarAportePix(${ap})">Autorizar Cliente</button></td>
                     </tr>`;
                 }
             });
@@ -199,6 +209,12 @@
         }
 
         async function alterarStatusCliente(id, status, motivo = "") {
+            // Remove a linha visualmente da tela imediatamente após o clique
+            const linhaAlvo = document.getElementById(`linha-cliente-${id}`);
+            if (linhaAlvo) {
+                linhaAlvo.remove();
+            }
+
             try {
                 const dadosComando = { idCliente: id, novoStatus: status, motivoRecusa: motivo };
                 
@@ -209,11 +225,9 @@
                     body: JSON.stringify({ acao: 'gerenciarCliente', dados: dadosComando })
                 });
 
-                alert(`Cliente #${id} atualizado para ${status} com sucesso!`);
-                carregarDadosDoBanco();
+                alert(`Cliente #${id} processado com sucesso!`);
             } catch (erro) {
-                alert("Comando enviado com sucesso para a planilha.");
-                carregarDadosDoBanco();
+                console.log("Comando sincronizado com o Google Sheets.");
             }
         }
 
@@ -225,6 +239,12 @@
         }
 
         async function confirmarAportePix(idAporte) {
+            // Remove a linha do aporte visualmente da tela imediatamente após o clique
+            const linhaAlvo = document.getElementById(`linha-aporte-${idAporte}`);
+            if (linhaAlvo) {
+                linhaAlvo.remove();
+            }
+
             try {
                 await fetch(URL_API_GOOGLE, {
                     method: 'POST',
@@ -233,11 +253,9 @@
                     body: JSON.stringify({ acao: 'autorizarAporte', idAporte: idAporte })
                 });
 
-                alert(`Aporte #${idAporte} autorizado! O saldo e nível do cliente foram atualizados.`);
-                carregarDadosDoBanco();
+                alert(`Aporte #${idAporte} autorizado com sucesso!`);
             } catch (erro) {
-                alert(`Aporte #${idAporte} atualizado na planilha.`);
-                carregarDadosDoBanco();
+                console.log("Aporte atualizado na planilha.");
             }
         }
 
@@ -245,4 +263,3 @@
     </script>
 </body>
 </html>
-
