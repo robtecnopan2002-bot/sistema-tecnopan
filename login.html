@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - RCB Investimentos</title>
+    <link href="https://jsdelivr.net" rel="stylesheet">
+    <style>
+        body { background-color: #f1f3f5; min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Segoe UI', sans-serif; }
+        .card-login { border: none; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 420px; background: white; padding: 30px; }
+        .btn-login { background-color: #010e21; color: white; font-weight: bold; border: none; padding: 12px; border-radius: 10px; width: 100%; transition: 0.3s; }
+        .btn-login:hover { background-color: #caa252; color: #010e21; }
+        .text-dourado { color: #caa252; }
+    </style>
+</head>
+<body>
+
+    <div class="card-login m-3">
+        <div class="text-center mb-4">
+            <h3 class="fw-bold mb-1 text-dark">Acesse sua Conta</h3>
+            <p class="text-muted small">RCB Investimentos</p>
+        </div>
+
+        <form id="formLogin">
+            <div class="mb-3">
+                <label class="form-label small fw-bold">E-mail</label>
+                <input type="email" class="form-control" id="email" placeholder="seuemail@provedor.com" required>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label small fw-bold">Senha</label>
+                <input type="password" class="form-control" id="senha" placeholder="Digite sua senha" required>
+            </div>
+
+            <button type="submit" class="btn-login mb-3" id="btnEntrar">Entrar no Sistema</button>
+            
+            <div class="text-center mt-2">
+                <p class="small text-muted">Não tem uma conta? <a href="cadastro.html" class="text-decoration-none fw-bold" style="color: #010e21;">Cadastre-se</a></p>
+                <a href="index.html" class="text-decoration-none small text-secondary">← Voltar ao Simulador</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const URL_API_GOOGLE = "https://script.google.com/macros/library/d/12HHrRalQZ9FwcjhzExmq-FQjFKMZdWwG-QbxwRsY5A39RnIOwtodjszB/6";
+
+        document.getElementById('formLogin').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnEntrar');
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+
+            btn.innerText = "Autenticando..."; btn.disabled = true;
+
+            try {
+                const resposta = await fetch(`${URL_API_GOOGLE}?action=loginCliente&email=${email}&senha=${senha}`);
+                const resultado = await resposta.json();
+
+                if (resultado && resultado.sucesso) {
+                    // Guarda os dados na memória para usar no Dashboard
+                    localStorage.setItem('idCliente', resultado.id);
+                    localStorage.setItem('nomeCliente', resultado.nome);
+
+                    // Redireciona dependendo do status na planilha
+                    if (resultado.status === "Pendente") {
+                        window.location.href = "index.html?status=analise";
+                    } else if (resultado.status === "Ativo") {
+                        window.location.href = "dashboard.html";
+                    } else {
+                        alert("Sua conta possui restrições. Entre em contato com o suporte.");
+                        window.location.href = "index.html";
+                    }
+                } else {
+                    alert(resultado.mensagem || "Erro ao fazer login.");
+                    btn.innerText = "Entrar no Sistema"; btn.disabled = false;
+                }
+            } catch (erro) {
+                alert("Erro ao conectar ao servidor. Verifique suas credenciais.");
+                btn.innerText = "Entrar no Sistema"; btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
