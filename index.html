@@ -9,112 +9,31 @@
     <style>
         body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         /* Fundo azul escuro idêntico ao da sua logo */
-        .hero-section { background-color: #031530; color: white; padding: 50px 0; border-radius: 0 0 30px 30px; }
-        .logo-container img { max-width: 220px; height: auto; display: inline-block; }
+        .hero-section { background-color: #010e21; color: white; padding: 30px 0 50px 0; border-radius: 0 0 30px 30px; }
+        .logo-container img { max-width: 180px; height: auto; display: inline-block; }
         /* Cartão do simulador com bordas suaves e sombra leve */
         .card-simulador { border: none; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
         /* Cor dourada extraída da seta da logo RCB */
-        .text-dourado { color: #b08d49 !important; }
-        .range-dourado::-webkit-slider-thumb { background: #b08d49; }
-        .range-dourado::-moz-range-thumb { background: #b08d49; }
-        /* Botão verde de sucesso para conversão */
+        .text-dourado { color: #caa252 !important; }
+        .range-dourado::-webkit-slider-thumb { background: #caa252; }
+        .range-dourado::-moz-range-thumb { background: #caa252; }
+        /* Botões customizados */
         .btn-principal { background-color: #00c853; color: white; font-weight: bold; border-radius: 10px; padding: 12px 30px; transition: 0.3s; text-decoration: none; display: inline-block; }
         .btn-principal:hover { background-color: #009624; color: white; transform: translateY(-2px); }
-        .valores-destaque { font-size: 1.8rem; color: #031530; font-weight: 700; }
+        .btn-admin-topo { border: 1px solid #caa252; color: #caa252; font-size: 0.85rem; font-weight: 600; padding: 6px 16px; border-radius: 20px; transition: 0.3s; text-decoration: none; }
+        .btn-admin-topo:hover { background-color: #caa252; color: #010e21; }
+        .valores-destaque { font-size: 1.8rem; color: #010e21; font-weight: 700; }
     </style>
 </head>
 <body>
 
     <!-- Cabeçalho Customizado com a Identidade Visual da RCB Investimentos -->
     <header class="hero-section text-center">
+        <!-- Barra superior discreta para o Login do Administrador -->
+        <div class="container text-end mb-4 px-4">
+            <a href="admin.html" class="btn-admin-topo">Painel Admin</a>
+        </div>
+
         <div class="container px-4">
-            <!-- Espaço para carregar a imagem da sua logo salva no GitHub -->
+            <!-- Logo integrada diretamente no código em formato seguro -->
             <div class="logo-container mb-3">
-                <img src="./logo.png" alt="RCB Investimentos" id="logoRob" onerror="this.src='https://placehold.co'">
-            </div>
-            <h1 class="display-6 fw-bold mb-3">Multiplique Seu Capital Diariamente</h1>
-            <p class="lead mb-2">A tecnologia ideal para o seu crescimento financeiro.</p>
-            <p class="text-muted small">Rendimentos previsíveis de <strong class="text-dourado">0,1% a 1,0% ao dia</strong> direto na sua conta.</p>
-        </div>
-    </header>
-
-    <!-- Área do Simulador Dinâmico -->
-    <main class="container my-5 px-4">
-        <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-6">
-                <div class="card card-simulador p-4 bg-white">
-                    <h3 class="text-center mb-4 fw-bold text-secondary text-uppercase small tracking-wide">Simulador de Rendimentos</h3>
-                    
-                    <!-- Campo 1: Valor do Investimento -->
-                    <div class="mb-4">
-                        <label for="rangeValor" class="form-label fw-semibold d-flex justify-content-between">
-                            <span>Valor do Aporte:</span>
-                            <span class="text-dourado fw-bold" id="txtValor">R$ 1.000</span>
-                        </label>
-                        <input type="range" class="form-range range-dourado" id="rangeValor" min="300" max="5000" step="50" value="1000">
-                        <div class="d-flex justify-content-between text-muted small">
-                            <span>R$ 300 (Mínimo)</span>
-                            <span>R$ 5.000 (Máximo)</span>
-                        </div>
-                    </div>
-
-                    <!-- Campo 2: Taxa Diária -->
-                    <div class="mb-4">
-                        <label for="rangeTaxa" class="form-label fw-semibold d-flex justify-content-between">
-                            <span>Rendimento Diário Escolhido:</span>
-                            <span class="text-dourado fw-bold" id="txtTaxa">0.5%</span>
-                        </label>
-                        <input type="range" class="form-range range-dourado" id="rangeTaxa" min="0.1" max="1" step="0.1" value="0.5">
-                    </div>
-
-                    <hr class="my-4">
-
-                    <!-- Resultados da Simulação -->
-                    <div class="row text-center mb-4">
-                        <div class="col-6 border-end">
-                            <p class="text-muted mb-1 small uppercase fw-bold">Lucro por Dia (Est.)</p>
-                            <p class="valores-destaque text-success" id="lucroDiario">R$ 5,00</p>
-                        </div>
-                        <div class="col-6">
-                            <p class="text-muted mb-1 small uppercase fw-bold">Lucro Mensal (Est.)</p>
-                            <p class="valores-destaque text-success" id="lucroMensal">R$ 150,00</p>
-                        </div>
-                    </div>
-
-                    <!-- Botão de Ação Interligando com a Próxima Tela -->
-                    <div class="text-center d-grid">
-                        <a href="cadastro.html" class="btn-principal">Começar Agora e Rentabilizar</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Lógica de Cálculo do Simulador -->
-    <script>
-        const rangeValor = document.getElementById('rangeValor');
-        const rangeTaxa = document.getElementById('rangeTaxa');
-        const txtValor = document.getElementById('txtValor');
-        const txtTaxa = document.getElementById('txtTaxa');
-        const lucroDiario = document.getElementById('lucroDiario');
-        const lucroMensal = document.getElementById('lucroMensal');
-
-        function calcularSimulacao() {
-            const valor = parseFloat(rangeValor.value);
-            const taxaDiaria = parseFloat(rangeTaxa.value) / 100;
-
-            txtValor.innerText = `R$ ${valor.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}`;
-            txtTaxa.innerText = `${rangeTaxa.value}%`;
-
-            const ganhoDia = valor * taxaDiaria;
-            const ganhoMes = ganhoDia * 30;
-
-            lucroDiario.innerText = `R$ ${ganhoDia.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
-            lucroMensal.innerText = `R$ ${ganhoMes.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
-        }
-
-        rangeValor.addEventListener('input', calcularSimulacao);
-        rangeTaxa.addEventListener('input', calcularSimulacao);
-    </script>
-</body>
-</html>
