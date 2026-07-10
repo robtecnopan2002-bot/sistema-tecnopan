@@ -103,9 +103,9 @@
 
     <!-- Scripts Bootstrap e Conectividade -->
     <script src="https://jsdelivr.net"></script>
-    <script>
+        <script>
         // COLOQUE SEU LINK DO GOOGLE APPS SCRIPT ABAIXO
-        const URL_API_GOOGLE = "SUA_URL_DO_APP_DA_WEB_AQUI";
+        const URL_API_GOOGLE = "https://script.google.com/macros/library/d/12HHrRalQZ9FwcjhzExmq-FQjFKMZdWwG-QbxwRsY5A39RnIOwtodjszB/3";
 
         async function carregarDadosDoBanco() {
             const btn = document.getElementById('btnAtualizar');
@@ -122,7 +122,6 @@
                 }
             } catch (e) {
                 console.log("Sincronizando tabelas com segurança local.");
-                // Dados de fallback para teste visual caso as tabelas estejam inicialmente limpas
                 renderizarClientes([]);
                 renderizarAportes([]);
             } finally {
@@ -131,13 +130,11 @@
             }
         }
 
-        // Renderização Dinâmica de Clientes vindos da planilha
         function renderizarClientes(linhas) {
             const corpo = document.getElementById('tabelaClientes');
             corpo.innerHTML = "";
             
             if (!linhas || linhas.length === 0) {
-                // Mock de teste visual se a planilha estiver vazia
                 corpo.innerHTML = `
                 <tr>
                     <td>#1</td><td>Cliente Exemplo Pendente</td><td>111.222.333-44</td><td>cliente@email.com</td>
@@ -151,7 +148,6 @@
             }
 
             linhas.forEach(cli => {
-                // Estrutura de colunas da aba Clientes: ID(0), Nome(1), CPF(2)... Status(7)
                 if (cli[7] === "Pendente") {
                     corpo.innerHTML += `
                     <tr>
@@ -170,17 +166,83 @@
             }
         }
 
-        // Renderização Dinâmica de Aportes vindos da planilha
         function renderizarAportes(linhas) {
             const corpo = document.getElementById('tabelaAportes');
             corpo.innerHTML = "";
 
             if (!linhas || linhas.length === 0) {
-                // Mock de teste visual se a planilha estiver vazia
                 corpo.innerHTML = `
                 <tr>
                     <td>#101</td><td>Cliente #1</td><td><strong>R$ 1.000,00</strong></td><td><span class="badge bg-dark">PRATA</span></td>
                     <td><span class="badge bg-info">Aguardando PIX</span></td>
                     <td><button class="btn btn-primary btn-sm" onclick="confirmarAportePix(101)">Autorizar Cliente</button></td>
                 </tr>`;
-                return;}linhas.forEach(ap => {// Estrutura de colunas da aba Aportes: ID_Aporte(0), ID_Cliente(1), Valor(2), Nivel(3), Status(4)if (ap[4] === "Aguardando Aprovação" || ap[4] === "Aguardando PIX" || ap[4] === "Pendente") {corpo.innerHTML +=  <tr> <td>#${ap[0]}</td><td>Cliente #${ap[1]}</td> <td><strong>R$ ${parseFloat(ap[2]).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></td> <td><span class="badge bg-dark">${ap[3].toUpperCase()}</span></td> <td><span class="badge bg-info">Aguardando PIX</span></td> <td><button class="btn btn-primary btn-sm" onclick="confirmarAportePix(${ap[0]})">Autorizar Cliente</button></td> </tr>;}});if(corpo.innerHTML === "") {corpo.innerHTML = <tr><td colspan="6" class="text-center text-success fw-semibold">Nenhum aporte pendente de aprovação!</td></tr>;}}// Funções para processar as ações disparando dados de volta para a Planilhaasync function alterarStatusCliente(id, status, motivo = "") {try {const dadosComando = { idCliente: id, novoStatus: status, motivoRecusa: motivo };await fetch(URL_API_GOOGLE, {method: 'POST',mode: 'no-cors',headers: { 'Content-Type': 'application/json' },body: JSON.stringify({ acao: 'gerenciarCliente', dados: dadosComando })});alert(Cliente #${id} atualizado para ${status} com sucesso!);carregarDadosDoBanco();} catch (erro) {alert("Comando enviado com sucesso para a planilha.");carregarDadosDoBanco();}}function recusarClientePrompt(id) {const motivo = prompt("Digite o motivo da recusa (Será enviado por e-mail automaticamente):");if (motivo) {alterarStatusCliente(id, 'Recusado', motivo);}}async function confirmarAportePix(idAporte) {try {await fetch(URL_API_GOOGLE, {method: 'POST',mode: 'no-cors',headers: { 'Content-Type': 'application/json' },body: JSON.stringify({ acao: 'autorizarAporte', idAporte: idAporte })});alert(Aporte #${idAporte} autorizado! O saldo e nível do cliente foram atualizados.);carregarDadosDoBanco();} catch (erro) {alert(Aporte #${idAporte} atualizado na planilha.);carregarDadosDoBanco();}}window.onload = carregarDadosDoBanco;
+                return;
+            }
+
+            linhas.forEach(ap => {
+                if (ap[4] === "Aguardando Aprovação" || ap[4] === "Aguardando PIX" || ap[4] === "Pendente") {
+                    corpo.innerHTML += `
+                    <tr>
+                        <td>#${ap[0]}</td><td>Cliente #${ap[1]}</td>
+                        <td><strong>R$ ${parseFloat(ap[2]).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></td>
+                        <td><span class="badge bg-dark">${ap[3].toUpperCase()}</span></td>
+                        <td><span class="badge bg-info">Aguardando PIX</span></td>
+                        <td><button class="btn btn-primary btn-sm" onclick="confirmarAportePix(${ap[0]})">Autorizar Cliente</button></td>
+                    </tr>`;
+                }
+            });
+
+            if(corpo.innerHTML === "") {
+                corpo.innerHTML = `<tr><td colspan="6" class="text-center text-success fw-semibold">Nenhum aporte pendente de aprovação!</td></tr>`;
+            }
+        }
+
+        async function alterarStatusCliente(id, status, motivo = "") {
+            try {
+                const dadosComando = { idCliente: id, novoStatus: status, motivoRecusa: motivo };
+                
+                await fetch(URL_API_GOOGLE, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ acao: 'gerenciarCliente', dados: dadosComando })
+                });
+
+                alert(`Cliente #${id} atualizado para ${status} com sucesso!`);
+                carregarDadosDoBanco();
+            } catch (erro) {
+                alert("Comando enviado com sucesso para a planilha.");
+                carregarDadosDoBanco();
+            }
+        }
+
+        function recusarClientePrompt(id) {
+            const motivo = prompt("Digite o motivo da recusa (Será enviado por e-mail automaticamente):");
+            if (motivo) {
+                alterarStatusCliente(id, 'Recusado', motivo);
+            }
+        }
+
+        async function confirmarAportePix(idAporte) {
+            try {
+                await fetch(URL_API_GOOGLE, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ acao: 'autorizarAporte', idAporte: idAporte })
+                });
+
+                alert(`Aporte #${idAporte} autorizado! O saldo e nível do cliente foram atualizados.`);
+                carregarDadosDoBanco();
+            } catch (erro) {
+                alert(`Aporte #${idAporte} atualizado na planilha.`);
+                carregarDadosDoBanco();
+            }
+        }
+
+        window.onload = carregarDadosDoBanco;
+    </script>
+</body>
+</html>
+
