@@ -59,9 +59,8 @@
         </form>
     </div>
 
-    <!-- Script de Integração e Formatação de Campos -->
     <script>
-        // MÁSCARAS DE INPUTS (Formatação visual enquanto digita)
+        // MÁSCARAS DE INPUTS (Formatação automática)
         document.getElementById('cpf').addEventListener('input', e => {
             e.target.value = e.target.value.replace(/\D/g, '').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');
         });
@@ -72,15 +71,15 @@
             e.target.value = e.target.value.replace(/\D/g, '').replace(/^(\d{5})(\d)/, '$1-$2');
         });
 
-        // ENVIO DOS DADOS EM TEMPO REAL PARA A PLANILHA DO GOOGLE DRIVE
+        // ENVIO DOS DADOS PARA O GOOGLE DRIVE
         document.getElementById('formCadastro').addEventListener('submit', async (e) => {
-            e.preventDefault(); // Impede a página de recarregar
+            e.preventDefault();
             
             const btn = document.getElementById('btnEnviar');
             btn.innerText = "Processando cadastro...";
             btn.disabled = true;
 
-            // Insira aqui a URL exata gerada no seu Google Apps Script
+            // Substitua as aspas abaixo pelo seu link de Implantação do Google Apps Script
             const URL_API_GOOGLE = "SUA_URL_DO_APP_DA_WEB_AQUI";
 
             const dadosFormulario = {
@@ -93,18 +92,16 @@
             };
 
             try {
-                // Faz o disparo em segundo plano para o Google Drive
                 const resposta = await fetch(URL_API_GOOGLE, {
                     method: 'POST',
-                    mode: 'no-cors', // Necessário para evitar bloqueios de segurança do navegador (CORS) com o Google
+                    mode: 'no-cors', 
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(dadosFormulario)
                 });
 
-                // Como usamos 'no-cors', o navegador não lê a resposta de sucesso diretamente, 
-                // mas se chegou aqui sem disparar erro, os dados entraram na planilha.
-                alert("Cadastro realizado! Aguarde a liberação do administrador na planilha.");
+                alert("Cadastro realizado com sucesso! Aguarde a aprovação do administrador.");
                 document.getElementById('formCadastro').reset();
+                window.location.href = "aportes.html"; // Joga o usuário automaticamente para a tela 3 após cadastrar
                 
             </div> catch (erro) {
                 alert("Erro ao conectar com o servidor. Tente novamente.");
