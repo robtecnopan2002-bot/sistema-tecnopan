@@ -9,6 +9,18 @@
     <style>
         body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         
+        /* Barra de aviso dourada para o cliente que acabou de se cadastrar */
+        .alerta-analise {
+            background-color: #caa252;
+            color: #010e21;
+            font-weight: 600;
+            text-align: center;
+            padding: 12px;
+            font-size: 0.95rem;
+            display: none; /* Escondido por padrão, aparece via JavaScript */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
         /* Fundo azul escuro idêntico ao da sua logo */
         .hero-section { 
             background-color: #010e21; 
@@ -61,18 +73,22 @@
 </head>
 <body>
 
+    <!-- Barra de Notificação Dinâmica de Análise -->
+    <div class="alerta-analise" id="barraAlerta">
+        💼 <strong>Status:</strong> Seu cadastro foi recebido com sucesso e está na fila de análise da nossa auditoria. Você pode continuar simulando seus lucros abaixo.
+    </div>
+
     <!-- Cabeçalho Customizado com a Identidade Visual da RCB Investimentos -->
     <header class="hero-section text-center">
         <!-- Botão de Acesso do Administrador (Tela 5) -->
         <a href="admin.html" class="btn-admin">Painel Admin ⚙️</a>
 
         <div class="container px-4">
-            <!-- Puxa a imagem enviada para a raiz do repositório -->
             <div class="logo-container mb-3">
                 <img src="logo.png" alt="RCB Investimentos" id="logoRcb" onerror="this.src='https://placehold.co'">
             </div>
             <h1 class="display-6 fw-bold mb-3">Multiplique Seu Capital Diariamente</h1>
-            <p class="lead mb-2">A tecnologia ideal para o seu crescimento financeiro.</p>
+            <p class="lead mb-2">A tecnologia ideal for o seu crescimento financeiro.</p>
             <p class="text-muted small">Rendimentos previsíveis de <strong class="text-dourado">0,1% a 1,0% ao dia</strong> direto na sua conta.</p>
         </div>
     </header>
@@ -122,14 +138,14 @@
 
                     <!-- Botão de Ação Interligando com a Próxima Tela -->
                     <div class="text-center d-grid">
-                        <a href="cadastro.html" class="btn-principal">Começar Agora e Rentabilizar</a>
+                        <a href="cadastro.html" class="btn-principal" id="btnAcaoPrincipal">Começar Agora e Rentabilizar</a>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Lógica de Cálculo do Simulador -->
+    <!-- Lógica de Cálculo e Inteligência de Notificação -->
     <script>
         const rangeValor = document.getElementById('rangeValor');
         const rangeTaxa = document.getElementById('rangeTaxa');
@@ -152,8 +168,27 @@
             lucroMensal.innerText = `R$ ${ganhoMes.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
         }
 
+        // INTELIGÊNCIA: Verifica se o usuário veio redirecionado da tela de cadastro em análise
+        function verificarOrigemCadastro() {
+            const parametros = new URLSearchParams(window.location.search);
+            if (parametros.get('status') === 'analise') {
+                // Exibe a barra dourada no topo
+                document.getElementById('barraAlerta').style.display = 'block';
+                // Altera o texto do botão principal para acalmar o cliente
+                const btn = document.getElementById('btnAcaoPrincipal');
+                btn.innerText = "Conta em Análise - Aguarde a Liberação";
+                btn.style.backgroundColor = "#6c757d";
+                btn.style.pointerEvents = "none"; // Desativa cliques repetidos
+            }
+        }
+
         rangeValor.addEventListener('input', calcularSimulacao);
         rangeTaxa.addEventListener('input', calcularSimulacao);
+        
+        window.onload = () => {
+            calcularSimulacao();
+            verificarOrigemCadastro();
+        };
     </script>
 </body>
 </html>
