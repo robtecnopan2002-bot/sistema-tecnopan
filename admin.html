@@ -139,15 +139,15 @@
             }
         }
 
-               function renderizarClientes(linhas) {
+        function renderizarClientes(linhas) {
             const corpo = document.getElementById('tabelaClientes');
             corpo.innerHTML = "";
             
             let temPendente = false;
-            // Se houver dados vindos da planilha
+            
             if (linhas && linhas.length > 0) {
                 linhas.forEach(cli => {
-                    // Na nossa planilha: ID=coluna 0, Nome=coluna 1, CPF=coluna 2, Email=coluna 5, Status=coluna 7
+                    // cli[0] = ID, cli[1] = Nome, cli[2] = CPF, cli[5] = Email, cli[7] = Status
                     if (cli[7] === "Pendente") {
                         temPendente = true;
                         corpo.innerHTML += `
@@ -155,7 +155,7 @@
                             <td>#${cli[0]}</td>
                             <td>${cli[1]}</td>
                             <td>${cli[2]}</td>
-                            <td>${cli[3]}</td>
+                            <td>${cli[5]}</td>
                             <td><span class="badge bg-warning">Pendente</span></td>
                             <td>
                                 <button class="btn btn-success btn-sm me-1" onclick="alterarStatusCliente(${cli[0]}, 'Ativo', '')">Aceitar</button>
@@ -166,37 +166,9 @@
                 });
             }
             
-            // Só exibe o cliente exemplo se a planilha estiver 100% vazia de cadastros
             if (!linhas || linhas.length === 0) {
-                corpo.innerHTML = `
-                <tr id="linha-cliente-1">
-                    <td>#1</td><td>Cliente Exemplo Pendente</td><td>111.222.333-44</td><td>cliente@email.com</td><td><span class="badge bg-warning">Pendente</span></td>
-                    <td>
-                        <button class="btn btn-success btn-sm me-1" onclick="alterarStatusCliente(1, 'Ativo', '')">Aceitar</button>
-                        <button class="btn btn-danger btn-sm" onclick="recusarClientePrompt(1)">Recusar</button>
-                    </td>
-                </tr>`;
+                corpo.innerHTML = `<tr><td colspan="6" class="text-center text-muted">Nenhum cliente cadastrado na planilha.</td></tr>`;
             } else if (!temPendente) {
-                corpo.innerHTML = `<tr><td colspan="6" class="text-center text-success fw-semibold">Todos os novos clientes já foram revisados!</td></tr>`;
-            }
-        }
-
-
-            linhas.forEach(cli => {
-                if (cli === "Pendente") {
-                    corpo.innerHTML += `
-                    <tr id="linha-cliente-${cli}">
-                        <td>#${cli}</td><td>${cli}</td><td>${cli}</td><td>${cli}</td>
-                        <td><span class="badge bg-warning">Pendente</span></td>
-                        <td>
-                            <button class="btn btn-success btn-sm me-1" onclick="alterarStatusCliente(${cli}, 'Ativo', '')">Aceitar</button>
-                            <button class="btn btn-danger btn-sm" onclick="recusarClientePrompt(${cli})">Recusar</button>
-                        </td>
-                    </tr>`;
-                }
-            });
-            
-            if(corpo.innerHTML === "") {
                 corpo.innerHTML = `<tr><td colspan="6" class="text-center text-success fw-semibold">Todos os novos clientes já foram revisados!</td></tr>`;
             }
         }
@@ -204,34 +176,34 @@
         function renderizarAportes(linhas) {
             const corpo = document.getElementById('tabelaAportes');
             corpo.innerHTML = "";
-
-            if (!linhas || linhas.length === 0) {
-                corpo.innerHTML = `
-                <tr id="linha-aporte-101">
-                    <td>#101</td><td>Cliente #1</td><td><strong>R$ 1.000,00</strong></td><td><span class="badge bg-dark">PRATA</span></td>
-                    <td><span class="badge bg-info">Aguardando PIX</span></td>
-                    <td><button class="btn btn-primary btn-sm" onclick="confirmarAportePix(101)">Autorizar Cliente</button></td>
-                </tr>`;
-                return;
+            
+            let temAporte = false;
+            
+            if (linhas && linhas.length > 0) {
+                linhas.forEach(ap => {
+                    // ap[0] = ID_Aporte, ap[1] = ID_Cliente, ap[2] = Valor, ap[3] = Nivel, ap[4] = Status_Pgto
+                    if (ap[4] === "Aguardando Aprovação" || ap[4] === "Aguardando PIX" || ap[4] === "Pendente") {
+                        temAporte = true;
+                        corpo.innerHTML += `
+                        <tr id="linha-aporte-${ap[0]}">
+                            <td>#${ap[0]}</td>
+                            <td>Cliente #${ap[1]}</td>
+                            <td><strong>R$ ${parseFloat(ap[2]).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></td>
+                            <td><span class="badge bg-dark">${ap[3].toUpperCase()}</span></td>
+                            <td><span class="badge bg-info">Aguardando PIX</span></td>
+                            <td><button class="btn btn-primary btn-sm" onclick="confirmarAportePix(${ap[0]})">Autorizar Cliente</button></td>
+                        </tr>`;
+                    }
+                });
             }
-
-            linhas.forEach(ap => {
-                if (ap === "Aguardando Aprovação" || ap === "Aguardando PIX" || ap === "Pendente") {
-                    corpo.innerHTML += `
-                    <tr id="linha-aporte-${ap}">
-                        <td>#${ap}</td><td>Cliente #${ap}</td>
-                        <td><strong>R$ ${parseFloat(ap).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></td>
-                        <td><span class="badge bg-dark">${ap.toUpperCase()}</span></td>
-                        <td><span class="badge bg-info">Aguardando PIX</span></td>
-                        <td><button class="btn btn-primary btn-sm" onclick="confirmarAportePix(${ap})">Autorizar Cliente</button></td>
-                    </tr>`;
-                }
-            });
-
-            if(corpo.innerHTML === "") {
-                corpo.innerHTML = `<tr><td colspan="6" class="text-center text-success fw-semibold">Nenhum aporte pendente de aprovação!</td></tr>`;
+            
+            if (!linhas || linhas.length === 0) {
+                corpo.innerHTML = `<tr><td colspan="6" class="text-center text-muted">Nenhum aporte registrado na planilha.</td></tr>`;
+            } else if (!temAporte) {
+                corpo.innerHTML = `<tr><td colspan="6" class="text-center text-success fw-semibold">Nenhum aporte pendente!</td></tr>`;
             }
         }
+
 
         async function alterarStatusCliente(id, status, motivo = "") {
             // Remove a linha visualmente da tela imediatamente após o clique
