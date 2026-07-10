@@ -63,6 +63,7 @@
 
     <script>
         const URL_API_GOOGLE = "https://script.google.com/macros/library/d/12HHrRalQZ9FwcjhzExmq-FQjFKMZdWwG-QbxwRsY5A39RnIOwtodjszB/5";
+        let intervaloMonitoramento = null; // Guarda a referência do robozinho para poder desligar
 
         // MÁSCARAS DE INPUTS
         document.getElementById('cpf').addEventListener('input', e => {
@@ -77,19 +78,27 @@
 
         // FUNÇÃO QUE MONITORA A VALIDAÇÃO DO ADMIN EM TEMPO REAL
         function iniciarMonitoramentoStatus(emailCliente) {
-            const intervalo = setInterval(async () => {
+            intervaloMonitoramento = setInterval(async () => {
                 try {
                     const resposta = await fetch(`${URL_API_GOOGLE}?action=checarStatus&email=${emailCliente}`);
                     const dados = await resposta.json();
                     
                     if (dados && dados.status === "Ativo") {
-                        clearInterval(intervalo); // Desliga o robozinho para poupar processamento
-                        window.location.href = "aportes.html"; // Redireciona o cliente automaticamente!
+                        clearInterval(intervaloMonitoramento); 
+                        window.location.href = "aportes.html"; 
                     }
                 } catch (erro) {
-                    console.log("Aguardando aprovação do administrador...");
+                    console.log("Aguardando aprovação...");
                 }
-            }, 5000); // Executa a checagem a cada 5 segundos
+            }, 5000); 
+        }
+
+        // FUNÇÃO PARA CANCELAR A ESPERA MANUALMENTE
+        function cancelarEspera() {
+            if (intervaloMonitoramento) {
+                clearInterval(intervaloMonitoramento); // Desliga o robozinho imediatamente
+            }
+            window.location.href = "index.html"; // Manda de volta para a home
         }
 
         function mostrarMensagemSucesso(emailCliente) {
@@ -102,10 +111,13 @@
                         Nossa equipe administrativa está revisando suas informações neste momento. 
                         <strong>Assim que for aprovado, esta página avançará automaticamente.</strong>
                     </p>
-                    <p class="text-muted small">Obrigado por escolher a <span class="fw-bold text-dark">RCB Investimentos</span>.</p>
+                    <p class="text-muted small mb-4">Obrigado por escolher a <span class="fw-bold text-dark">RCB Investimentos</span>.</p>
+                    <hr class="my-4">
+                    <div class="text-center">
+                        <button onclick="cancelarEspera()" class="btn btn-link text-decoration-none small text-secondary">← Cancelar e Voltar ao Início</button>
+                    </div>
                 </div>
             `;
-            // Inicia a verificação automática de 5 em 5 segundos
             iniciarMonitoramentoStatus(emailCliente);
         }
 
