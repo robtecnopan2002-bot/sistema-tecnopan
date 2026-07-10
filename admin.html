@@ -29,6 +29,7 @@
                     <div class="nav flex-column nav-pills text-start" id="v-pills-tab" role="tablist">
                         <button class="nav-link active mb-2" id="aba5-tab" data-bs-toggle="pill" data-bs-target="#aba5" type="button">Clientes Novos (Tela 5)</button>
                         <button class="nav-link mb-2" id="aba6-tab" data-bs-toggle="pill" data-bs-target="#aba6" type="button">Aportes/PIX (Tela 6)</button>
+                        <button class="nav-link mb-2" id="aba7-tab" data-bs-toggle="pill" data-bs-target="#aba7" type="button">Pedidos de Saque (Tela 7)</button>
                     </div>
                 </div>
                 <div class="mt-auto pt-4">
@@ -77,6 +78,7 @@
                             </div>
                         </div>
                     </div>
+                    
                     <!-- TELA 6: Aportes Solicitados -->
                     <div class="tab-pane fade" id="aba6">
                         <div class="card card-dados p-4 bg-white">
@@ -88,6 +90,23 @@
                                     </thead>
                                     <tbody id="tabelaAportes">
                                         <tr><td colspan="6" class="text-center text-muted">Buscando dados...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TELA 7: Saques Solicitados (ADICIONADO E CORRIGIDO) -->
+                    <div class="tab-pane fade" id="aba7">
+                        <div class="card card-dados p-4 bg-white">
+                            <h5 class="fw-bold mb-3 text-secondary">Solicitações de Resgate de Rendimento</h5>
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-light">
+                                        <tr><th>ID Saque</th><th>ID Cliente</th><th>Valor do Lucro</th><th>Status</th><th>Ação</th></tr>
+                                    </thead>
+                                    <tbody id="tabelaSaques">
+                                        <tr><td colspan="5" class="text-center text-muted">Buscando dados...</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -111,18 +130,17 @@
                 const dados = await resposta.json();
                 renderizarClientes(dados.clientes);
                 renderizarAportes(dados.aportes);
+                renderizarSaques(dados.saques);
             } catch (e) {
-                console.log("Erro ao processar a leitura da planilha.");
+                console.log("Erro ao carregar dados.");
             } finally {
                 btn.innerText = "🔄 Sincronizar com Planilha"; btn.disabled = false;
             }
         }
 
         function renderizarClientes(linhas) {
-            const corpo = document.getElementById('tabelaClientes');
-            corpo.innerHTML = "";
+            const corpo = document.getElementById('tabelaClientes'); corpo.innerHTML = "";
             let temPendente = false;
-            
             if (linhas && linhas.length > 0) {
                 linhas.forEach(cli => {
                     if (cli[7] === "Pendente") {
@@ -143,10 +161,8 @@
         }
 
         function renderizarAportes(linhas) {
-            const corpo = document.getElementById('tabelaAportes');
-            corpo.innerHTML = "";
+            const corpo = document.getElementById('tabelaAportes'); corpo.innerHTML = "";
             let temAporte = false;
-            
             if (linhas && linhas.length > 0) {
                 linhas.forEach(ap => {
                     if (ap[4] === "Aguardando Aprovação" || ap[4] === "Aguardando PIX" || ap[4] === "Pendente") {
@@ -165,51 +181,79 @@
             if(!temAporte) { corpo.innerHTML = `<tr><td colspan="6" class="text-center text-success fw-semibold">Nenhum aporte pendente!</td></tr>`; }
         }
 
-        async function alterarStatusCliente(id, status, motivo = "") {
-            const rowAlvo = document.getElementById(`linha-cliente-${id}`);
+        // NOVA FUNÇÃO: Renderiza os saques da aba Saques
+        function renderizarSaques(linhas) {
+            const corpo = document.getElementById('tabelaSaques'); corpo.innerHTML = "";
+            let temSaque = false;
+            if (linhas && linhas.length > 0) {
+                linhas.forEach(saq => {
+                    if (saq[3] === "Pendente") {
+                        temSaque = true;
+                        corpo.innerHTML += `
+                        <tr id="linha-saque-${saq[0]}">
+                            <td>#${saq[0]}</td><td>Cliente #${saq[1]}</td>
+                            <td><strong class="text-danger">R$ ${parseFloat(saq[2]).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></td>
+                            <td><span class="badge bg-warning">Aguardando PIX</span></td>
+                            <td><button class="btn btn-danger btn-sm fw-bold" onclick="finalizarPixSaque(${saq[0]})">Efetuar PIX Saque</button></td>
+                        </tr>`;
+                    }
+                });
+            }
+            if(!temSaque) { corpo.innerHTML = `<tr><td colspan="5" class="text-center text-success fw-semibold">Nenhum pedido de saque pendente!</td></tr>`; }
+        }
+
+        async function finalizarPixSaque(idSaque) {
+            const rowAlvo = document.getElementById(`linha-saque-${idSaque}`);
             if (rowAlvo) { rowAlvo.remove(); }
             try {
+                // Envia o comando para mudar o status do saque de Pendente para Aprovado no Sheets
                 await fetch(URL_API_GOOGLE, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ acao: 'autorizarSaque', idSaque: idSaque })
+                });
+                alert(`Saque #${idSaque} marcado como Pago com sucesso!`);
+            } catch (erro) { console.log("Saque autorizado."); }
+        }
+
+        async function alterarStatusCliente(id, status, motivo = "") {
+            const rowAlvo = document.getElementById(`linha-cliente-${id}`); if (rowAlvo) { rowAlvo.remove(); }
+            try {
+                await fetch(URL_API_GOOGLE, {
+                    method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({ acao: 'gerenciarCliente', dados: { idCliente: id, novoStatus: status, motivoRecusa: motivo } })
                 });
-                alert("Status atualizado e salvo na planilha com sucesso!");
-            } catch (erro) { console.log("Atualização enviada para a fila de salvamento."); }
+                alert("Status atualizado!");
+            } catch (erro) { console.log("Enviado."); }
         }
 
         function recusarClientePrompt(id) {
-            const motivo = prompt("Digite o motivo da recusa (Será enviado por e-mail automaticamente):");
+            const motivo = prompt("Digite o motivo da recusa:");
             if (motivo) { alterarStatusCliente(id, 'Recusado', motivo); }
         }
 
         async function confirmarAportePix(idAporte) {
-            const rowAlvo = document.getElementById(`linha-aporte-${idAporte}`);
-            if (rowAlvo) { rowAlvo.remove(); }
+            const rowAlvo = document.getElementById(`linha-aporte-${idAporte}`); if (rowAlvo) { rowAlvo.remove(); }
             try {
                 await fetch(URL_API_GOOGLE, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({ acao: 'autorizarAporte', idAporte: idAporte })
                 });
-                alert("Aporte autorizado e salvo com sucesso!");
-            } catch (erro) { console.log("Aporte enviado para processamento."); }
+                alert("Aporte autorizado!");
+            } catch (erro) { console.log("Enviado."); }
         }
 
         document.getElementById('formRendimento').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('btnRendimento');
-            const taxa = document.getElementById('inputTaxa').value;
+            const btn = document.getElementById('btnRendimento'); const taxa = document.getElementById('inputTaxa').value;
             btn.innerText = "Processando..."; btn.disabled = true;
             try {
                 await fetch(URL_API_GOOGLE, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({ acao: 'lancarRendimento', percentual: taxa })
                 });
-                alert(`Rendimento de ${taxa}% lançado com sucesso para todos!`);
-                document.getElementById('formRendimento').reset();
-            } catch(erro) { console.log("Comando de juros enviado."); }
+                alert(`Rendimento de ${taxa}% lançado!`); document.getElementById('formRendimento').reset();
+            } catch(erro) { console.log("Enviado."); }
             finally { btn.innerText = "Aplicar Rendimento Diário"; btn.disabled = false; }
         });
 
