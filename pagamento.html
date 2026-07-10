@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pagamento PIX - TecnoPan</title>
+    <title>Pagamento PIX - RCB Investimentos</title>
     <link href="https://jsdelivr.net" rel="stylesheet">
     <style>
         body { background-color: #f1f3f5; min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Segoe UI', sans-serif; }
         .card-pagamento { border: none; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 480px; background: white; padding: 30px; }
         .box-qrcode { background-color: #f8f9fa; border: 2px dashed #dee2e6; border-radius: 15px; padding: 20px; }
-        .btn-copiar { background-color: #1e3c72; color: white; font-weight: bold; border: none; width: 100%; padding: 12px; border-radius: 10px; transition: 0.3s; }
-        .btn-copiar:hover { background-color: #2a5298; color: white; }
+        .btn-copiar { background-color: #010e21; color: white; font-weight: bold; border: none; width: 100%; padding: 12px; border-radius: 10px; transition: 0.3s; }
+        .btn-copiar:hover { background-color: #caa252; color: #010e21; }
     </style>
 </head>
 <body>
@@ -45,19 +45,24 @@
         </div>
 
         <div class="d-grid">
-            <button class="btn-copiar" onclick="notificarEfetivado()">Já realizei o pagamento</button>
+            <button class="btn-copiar" id="btnNotificar" onclick="enviarAportePlanilha()">Já realizei o pagamento</button>
         </div>
     </div>
 
+    <!-- Elemento invisível de suporte para quebrar as travas de segurança CORS do Google -->
+    <iframe name="iframeOcultoPix" id="iframeOcultoPix" style="display:none;"></iframe>
+
     <script>
-        // Recupera as escolhas salvas na Tela 3
+        // COLOQUE SEU LINK DO GOOGLE APPS SCRIPT ABAIXO
+        const URL_API_GOOGLE = "https://script.google.com/macros/s/AKfycbxQ64NVWG-EPWBWHGsjOe2IdbyysrL59-qnH6jNNKRMq8hCLfrn_8uLYxEjjwOgBQz3/exec";
+
+        // Recupera as escolhas salvas nas telas anteriores
         const plano = localStorage.getItem('planoNome') || 'Não selecionado';
         const valor = localStorage.getItem('planoValor') || '0';
+        const idClienteLogado = localStorage.getItem('idCliente') || '0';
 
-        // Atualiza as informações textuais na tela
         document.getElementById('infoPlano').innerHTML = `Plano: <strong>${plano.toUpperCase()}</strong> — Valor: <strong>R$ ${parseInt(valor).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong>`;
 
-        // Gera de forma dinâmica o QR Code usando a API do Google vinculada à sua chave de e-mail
         const chavePixCompleta = "robtecnopan2004@gmail.com";
         const urlQrCode = `https://googleapis.com{encodeURIComponent(chavePixCompleta)}`;
         
@@ -68,18 +73,47 @@
             img.style.display = 'block';
         };
 
-        // Função do botão de copiar
         function copiarChave() {
             const inputChave = document.getElementById('chavePix');
             inputChave.select();
-            inputChave.setSelectionRange(0, 99999); // Suporte para celulares
+            inputChave.setSelectionRange(0, 99999);
             navigator.clipboard.writeText(inputChave.value);
             alert("Chave PIX copiada com sucesso!");
         }
 
-        function notificarEfetivado() {
-            alert("Obrigado! Sua solicitação foi enviada ao administrador. Aguarde o prazo de ativação em sua conta.");
-            window.location.href = "index.html"; // Redireciona de volta ao início
+        // ENVIO BLINDADO DO APORTE DIRETO PARA O GOOGLE DRIVE
+        function enviarAportePlanilha() {
+            const btn = document.getElementById('btnNotificar');
+            btn.innerText = "Registrando solicitação..."; btn.disabled = true;
+
+            // Cria o túnel de envio invisível livre de bloqueio CORS
+            const formInvisivel = document.createElement('form');
+            formInvisivel.method = 'POST';
+            formInvisivel.action = URL_API_GOOGLE;
+            formInvisivel.target = 'iframeOcultoPix';
+
+            const dadosAporte = {
+                acao: "registrarAporteSite", // Avisa o Google que é uma entrada de aporte
+                idCliente: idClienteLogado,
+                valorAporte: valor,
+                nivelPlano: plano
+            };
+
+            const inputDados = document.createElement('input');
+            inputDados.type = 'hidden';
+            inputDados.name = 'dadosJSON';
+            inputDados.value = JSON.stringify(dadosAporte);
+            
+            formInvisivel.appendChild(inputDados);
+            document.body.appendChild(formInvisivel);
+            
+            formInvisivel.submit(); // Dispara o salvamento na planilha
+            
+            setTimeout(() => {
+                formInvisivel.remove();
+                alert("Obrigado! Sua solicitação de aporte foi enviada ao administrador. Aguarde o prazo de ativação.");
+                window.location.href = "index.html"; // Retorna ao simulador inicial
+            }, 1200);
         }
     </script>
 </body>
