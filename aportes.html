@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escolha seu Aporte - TecnoPan</title>
+    <link href="https://jsdelivr.net" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; padding: 40px 0; }
+        .card-plano { border: none; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s; background: white; }
+        .card-plano:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .btn-selecionar { width: 100%; border-radius: 8px; font-weight: bold; }
+        .badge-nivel { font-size: 0.9rem; padding: 6px 12px; border-radius: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="container px-4">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold text-dark">Escolha o seu Plano de Aporte</h2>
+            <p class="text-muted">Selecione o nível desejado para começar a gerar lucros diários.</p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <!-- Plano Cobre -->
+            <div class="col-md-4 col-sm-6">
+                <div class="card card-plano p-4 text-center">
+                    <span class="badge bg-secondary badge-nivel mx-auto mb-3">COBRE</span>
+                    <h3 class="fw-bold text-dark">R$ 300,00</h3>
+                    <p class="text-muted small mb-4">Rendimento de 0,1% a 1% ao dia</p>
+                    <button class="btn btn-outline-secondary btn-selecionar" onclick="selecionarPlano('Cobre', 300)">Selecionar</button>
+                </div>
+            </div>
+
+            <!-- Plano Bronze -->
+            <div class="col-md-4 col-sm-6">
+                <div class="card card-plano p-4 text-center">
+                    <span class="badge bg-warning text-dark badge-nivel mx-auto mb-3">BRONZE</span>
+                    <h3 class="fw-bold text-dark">R$ 600,00</h3>
+                    <p class="text-muted small mb-4">Rendimento de 0,1% a 1% ao dia</p>
+                    <button class="btn btn-outline-warning btn-selecionar text-dark" onclick="selecionarPlano('Bronze', 600)">Selecionar</button>
+                </div>
+            </div>
+
+            <!-- Plano Prata -->
+            <div class="col-md-4 col-sm-6">
+                <div class="card card-plano p-4 text-center">
+                    <span class="badge bg-light text-dark border badge-nivel mx-auto mb-3">PRATA</span>
+                    <h3 class="fw-bold text-dark">R$ 1.000,00</h3>
+                    <p class="text-muted small mb-4">Rendimento de 0,1% a 1% ao dia</p>
+                    <button class="btn btn-outline-dark btn-selecionar" onclick="selecionarPlano('Prata', 1000)">Selecionar</button>
+                </div>
+            </div>
+
+            <!-- Plano Ouro -->
+            <div class="col-md-4 col-sm-6">
+                <div class="card card-plano p-4 text-center" style="border: 2px solid #ffc107;">
+                    <span class="badge bg-primary badge-nivel mx-auto mb-3">OURO</span>
+                    <h3 class="fw-bold text-dark">R$ 3.000,00</h3>
+                    <p class="text-muted small mb-4">Rendimento de 0,1% a 1% ao dia</p>
+                    <button class="btn btn-warning btn-selecionar text-dark fw-bold" onclick="selecionarPlano('Ouro', 3000)">Selecionar</button>
+                </div>
+            </div>
+
+            <!-- Plano Diamante -->
+            <div class="col-md-4 col-sm-6">
+                <div class="card card-plano p-4 text-center" style="background: linear-gradient(145deg, #ffffff, #e3f2fd); border: 2px solid #0d6efd;">
+                    <span class="badge bg-info text-dark badge-nivel mx-auto mb-3">DIAMANTE</span>
+                    <h3 class="fw-bold text-primary">R$ 5.000,00</h3>
+                    <p class="text-muted small mb-4">Rendimento máximo do sistema</p>
+                    <button class="btn btn-primary btn-selecionar" onclick="selecionarPlano('Diamante', 5000)">Selecionar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selecionarPlano(nome, valor) {
+            // Guarda temporariamente os dados escolhidos na memória do navegador do cliente
+            localStorage.setItem('planoNome', nome);
+            localStorage.setItem('planoValor', valor);
+            // Direciona para a tela de pagamento
+            window.location.href = "pagamento.html";
+        }
+    </script>
+</body>
+</html>
