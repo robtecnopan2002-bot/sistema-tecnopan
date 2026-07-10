@@ -63,7 +63,7 @@
 
     <script>
         const URL_API_GOOGLE = "https://script.google.com/macros/library/d/12HHrRalQZ9FwcjhzExmq-FQjFKMZdWwG-QbxwRsY5A39RnIOwtodjszB/5";
-        let intervaloMonitoramento = null; // Guarda a referência do robozinho para poder desligar
+        let intervaloMonitoramento = null;
 
         // MÁSCARAS DE INPUTS
         document.getElementById('cpf').addEventListener('input', e => {
@@ -93,12 +93,12 @@
             }, 5000); 
         }
 
-        // FUNÇÃO PARA CANCELAR A ESPERA MANUALMENTE
-        function cancelarEspera() {
+        // APENAS DIRECIONA PARA A HOME SEM CANCELAR NADA NO BANCO DE DADOS
+        function irParaHome() {
             if (intervaloMonitoramento) {
-                clearInterval(intervaloMonitoramento); // Desliga o robozinho imediatamente
+                clearInterval(intervaloMonitoramento);
             }
-            window.location.href = "index.html"; // Manda de volta para a home
+            window.location.href = "index.html";
         }
 
         function mostrarMensagemSucesso(emailCliente) {
@@ -107,14 +107,12 @@
                     <div class="spinner-border text-dark mb-4" role="status" style="width: 3rem; height: 3rem;"></div>
                     <h3 class="fw-bold text-dark mb-3">Cadastro em Análise...</h3>
                     <p class="text-secondary mb-4" style="line-height: 1.6;">
-                        Seus dados foram enviados com sucesso! Por favor, aguarde nesta tela. 
-                        Nossa equipe administrativa está revisando suas informações neste momento. 
-                        <strong>Assim que for aprovado, esta página avançará automaticamente.</strong>
+                        Seus dados foram enviados com sucesso! Nossa equipe administrativa está revisando suas informações neste momento.
                     </p>
-                    <p class="text-muted small mb-4">Obrigado por escolher a <span class="fw-bold text-dark">RCB Investimentos</span>.</p>
+                    <p class="text-muted small mb-4">Fique à vontade para voltar ao início e continuar simulando enquanto aprovamos sua conta.</p>
                     <hr class="my-4">
                     <div class="text-center">
-                        <button onclick="cancelarEspera()" class="btn btn-link text-decoration-none small text-secondary">← Cancelar e Voltar ao Início</button>
+                        <button onclick="irParaHome()" class="btn btn-dark fw-bold py-2 px-4 rounded-3 text-white border-0" style="background-color: #010e21;">🏠 Voltar à Página Inicial</button>
                     </div>
                 </div>
             `;
