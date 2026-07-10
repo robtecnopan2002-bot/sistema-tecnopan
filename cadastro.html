@@ -62,6 +62,8 @@
     </div>
 
     <script>
+        const URL_API_GOOGLE = "https://script.google.com/macros/library/d/12HHrRalQZ9FwcjhzExmq-FQjFKMZdWwG-QbxwRsY5A39RnIOwtodjszB/5";
+
         // MÁSCARAS DE INPUTS
         document.getElementById('cpf').addEventListener('input', e => {
             e.target.value = e.target.value.replace(/\D/g, '').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');
@@ -73,22 +75,38 @@
             e.target.value = e.target.value.replace(/\D/g, '').replace(/^(\d{5})(\d)/, '$1-$2');
         });
 
-        // FUNÇÃO DE EXIBIÇÃO DA MENSAGEM DE SUCESSO
-        function mostrarMensagemSucesso() {
+        // FUNÇÃO QUE MONITORA A VALIDAÇÃO DO ADMIN EM TEMPO REAL
+        function iniciarMonitoramentoStatus(emailCliente) {
+            const intervalo = setInterval(async () => {
+                try {
+                    const resposta = await fetch(`${URL_API_GOOGLE}?action=checarStatus&email=${emailCliente}`);
+                    const dados = await resposta.json();
+                    
+                    if (dados && dados.status === "Ativo") {
+                        clearInterval(intervalo); // Desliga o robozinho para poupar processamento
+                        window.location.href = "aportes.html"; // Redireciona o cliente automaticamente!
+                    }
+                } catch (erro) {
+                    console.log("Aguardando aprovação do administrador...");
+                }
+            }, 5000); // Executa a checagem a cada 5 segundos
+        }
+
+        function mostrarMensagemSucesso(emailCliente) {
             document.getElementById('conteudoCard').innerHTML = `
                 <div class="text-center py-4">
-                    <div class="mb-4" style="font-size: 4rem;">🎉</div>
-                    <h3 class="fw-bold text-dark mb-3">Cadastro Realizado com Sucesso!</h3>
+                    <div class="spinner-border text-dark mb-4" role="status" style="width: 3rem; height: 3rem;"></div>
+                    <h3 class="fw-bold text-dark mb-3">Cadastro em Análise...</h3>
                     <p class="text-secondary mb-4" style="line-height: 1.6;">
-                        Seus dados foram encaminhados para a nossa equipe administrativa. 
-                        Nossa auditoria analisará as informações em breve para liberar o acesso total à sua conta de rendimentos.
+                        Seus dados foram enviados com sucesso! Por favor, aguarde nesta tela. 
+                        Nossa equipe administrativa está revisando suas informações neste momento. 
+                        <strong>Assim que for aprovado, esta página avançará automaticamente.</strong>
                     </p>
-                    <p class="text-muted small mb-4">Obrigado por escolher a <span class="fw-bold text-dark">RCB Investimentos</span>.</p>
-                    <div class="d-grid">
-                        <a href="aportes.html" class="btn btn-dark fw-bold py-2 rounded-3" style="background-color: #010e21; border: none;">Visualizar Planos de Aporte →</a>
-                    </div>
+                    <p class="text-muted small">Obrigado por escolher a <span class="fw-bold text-dark">RCB Investimentos</span>.</p>
                 </div>
             `;
+            // Inicia a verificação automática de 5 em 5 segundos
+            iniciarMonitoramentoStatus(emailCliente);
         }
 
         // ENVIO DOS DADOS PARA O GOOGLE DRIVE
@@ -96,36 +114,29 @@
             e.preventDefault();
             
             const btn = document.getElementById('btnEnviar');
+            const emailDigitado = document.getElementById('email').value;
             btn.innerText = "Processando cadastro...";
             btn.disabled = true;
-
-            const URL_API_GOOGLE = "https://script.google.com/macros/library/d/12HHrRalQZ9FwcjhzExmq-FQjFKMZdWwG-QbxwRsY5A39RnIOwtodjszB/4";
 
             const dadosFormulario = {
                 nome: document.getElementById('nome').value,
                 cpf: document.getElementById('cpf').value,
                 telefone: document.getElementById('telefone').value,
                 cep: document.getElementById('cep').value,
-                email: document.getElementById('email').value,
+                email: emailDigitado,
                 senha: document.getElementById('senha').value
             };
 
             try {
-                // Envia para a planilha
                 await fetch(URL_API_GOOGLE, {
                     method: 'POST',
                     mode: 'no-cors', 
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(dadosFormulario)
                 });
-                
-                // Força a exibição da mensagem na tela do usuário
-                mostrarMensagemSucesso();
-                
+                mostrarMensagemSucesso(emailDigitado);
             } catch (erro) {
-                console.error("Cadastro enviado e gravado na planilha.", erro);
-                // Exibe a mensagem mesmo se o navegador disparar bloqueio de segurança CORS falso
-                mostrarMensagemSucesso();
+                mostrarMensagemSucesso(emailDigitado);
             }
         });
     </script>
