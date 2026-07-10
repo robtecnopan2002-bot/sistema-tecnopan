@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento PIX - TecnoPan</title>
+    <link href="https://jsdelivr.net" rel="stylesheet">
+    <style>
+        body { background-color: #f1f3f5; min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Segoe UI', sans-serif; }
+        .card-pagamento { border: none; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 480px; background: white; padding: 30px; }
+        .box-qrcode { background-color: #f8f9fa; border: 2px dashed #dee2e6; border-radius: 15px; padding: 20px; }
+        .btn-copiar { background-color: #1e3c72; color: white; font-weight: bold; border: none; width: 100%; padding: 12px; border-radius: 10px; transition: 0.3s; }
+        .btn-copiar:hover { background-color: #2a5298; color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="card-pagamento m-3 text-center">
+        <h3 class="fw-bold mb-1 text-dark">Pagamento via PIX</h3>
+        <p class="text-muted small mb-4">Envie o valor exato correspondente ao seu plano para ativar sua conta.</p>
+
+        <!-- Detalhes do Plano Escolhido -->
+        <div class="alert alert-primary mb-4 py-2" id="infoPlano">
+            Carregando detalhes do plano...
+        </div>
+
+        <!-- Área Visual do QR Code -->
+        <div class="box-qrcode mb-4">
+            <img id="imgQrCode" src="" alt="QR Code PIX" class="img-fluid mb-2" style="display:none; max-width: 200px; margin: 0 auto;">
+            <div id="loader" class="spinner-border text-primary my-3" role="status"></div>
+            <p class="text-muted small mb-0">Abra o app do seu banco e escaneie o código acima.</p>
+        </div>
+
+        <!-- Campo Copia e Cola -->
+        <div class="mb-4 text-start">
+            <label class="form-label small fw-bold text-secondary">Chave PIX (E-mail):</label>
+            <div class="input-group">
+                <input type="text" class="form-control bg-light text-center fw-bold" id="chavePix" value="robtecnopan2004@gmail.com" readonly>
+                <button class="btn btn-outline-primary" type="button" onclick="copiarChave()">Copiar</button>
+            </div>
+        </div>
+
+        <div class="alert alert-warning small text-start mb-4">
+            📌 <strong>Aviso importante:</strong> Após efetuar a transferência no seu banco, guarde o comprovante. O administrador validará o seu pagamento na planilha para liberar os seus rendimentos.
+        </div>
+
+        <div class="d-grid">
+            <button class="btn-copiar" onclick="notificarEfetivado()">Já realizei o pagamento</button>
+        </div>
+    </div>
+
+    <script>
+        // Recupera as escolhas salvas na Tela 3
+        const plano = localStorage.getItem('planoNome') || 'Não selecionado';
+        const valor = localStorage.getItem('planoValor') || '0';
+
+        // Atualiza as informações textuais na tela
+        document.getElementById('infoPlano').innerHTML = `Plano: <strong>${plano.toUpperCase()}</strong> — Valor: <strong>R$ ${parseInt(valor).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong>`;
+
+        // Gera de forma dinâmica o QR Code usando a API do Google vinculada à sua chave de e-mail
+        const chavePixCompleta = "robtecnopan2004@gmail.com";
+        const urlQrCode = `https://googleapis.com{encodeURIComponent(chavePixCompleta)}`;
+        
+        const img = document.getElementById('imgQrCode');
+        img.src = urlQrCode;
+        img.onload = () => {
+            document.getElementById('loader').style.display = 'none';
+            img.style.display = 'block';
+        };
+
+        // Função do botão de copiar
+        function copiarChave() {
+            const inputChave = document.getElementById('chavePix');
+            inputChave.select();
+            inputChave.setSelectionRange(0, 99999); // Suporte para celulares
+            navigator.clipboard.writeText(inputChave.value);
+            alert("Chave PIX copiada com sucesso!");
+        }
+
+        function notificarEfetivado() {
+            alert("Obrigado! Sua solicitação foi enviada ao administrador. Aguarde o prazo de ativação em sua conta.");
+            window.location.href = "index.html"; // Redireciona de volta ao início
+        }
+    </script>
+</body>
+</html>
