@@ -42,40 +42,43 @@
     </div>
 
     <script>
-        const URL_API_GOOGLE = "https://script.google.com/macros/library/d/12HHrRalQZ9FwcjhzExmq-FQjFKMZdWwG-QbxwRsY5A39RnIOwtodjszB/8";
+        // INSTALE SUA URL DA API DO GOOGLE ABAIXO
+        const URL_API_GOOGLE = "https://script.google.com/macros/s/AKfycbxQ64NVWG-EPWBWHGsjOe2IdbyysrL59-qnH6jNNKRMq8hCLfrn_8uLYxEjjwOgBQz3/exec";
 
         document.getElementById('formLogin').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnEntrar');
-            const email = document.getElementById('email').value;
-            const senha = document.getElementById('senha').value;
+            const emailDigitado = document.getElementById('email').value.trim();
+            const senhaDigitada = document.getElementById('senha').value;
 
             btn.innerText = "Autenticando..."; btn.disabled = true;
 
             try {
-                const resposta = await fetch(`${URL_API_GOOGLE}?action=loginCliente&email=${email}&senha=${senha}`);
+                // Faz a chamada de leitura enviando as credenciais para conferência
+                const resposta = await fetch(`${URL_API_GOOGLE}?action=loginCliente&email=${encodeURIComponent(emailDigitado)}&senha=${encodeURIComponent(senhaDigitada)}`);
                 const resultado = await resposta.json();
 
                 if (resultado && resultado.sucesso) {
-                    // Guarda os dados na memória para usar no Dashboard
+                    // Salva temporariamente na memória do navegador do cliente para carregar no painel
                     localStorage.setItem('idCliente', resultado.id);
                     localStorage.setItem('nomeCliente', resultado.nome);
 
-                    // Redireciona dependendo do status na planilha
+                    // Redirecionamento inteligente baseado no Status gravado na planilha
                     if (resultado.status === "Pendente") {
                         window.location.href = "index.html?status=analise";
                     } else if (resultado.status === "Ativo") {
                         window.location.href = "painel.html";
                     } else {
-                        alert("Sua conta possui restrições. Entre em contato com o suporte.");
-                        window.location.href = "index.html";
+                        alert("Sua conta possui restrições de acesso. Entre em contato com o suporte.");
+                        btn.innerText = "Entrar no Sistema"; btn.disabled = false;
                     }
                 } else {
-                    alert(resultado.mensagem || "Erro ao fazer login.");
+                    alert(resultado.mensagem || "E-mail ou senha incorretos.");
                     btn.innerText = "Entrar no Sistema"; btn.disabled = false;
                 }
             } catch (erro) {
-                alert("Erro ao conectar ao servidor. Verifique suas credenciais.");
+                alert("Erro ao conectar ao servidor. Verifique se suas credenciais estão corretas.");
+                console.error(erro);
                 btn.innerText = "Entrar no Sistema"; btn.disabled = false;
             }
         });
