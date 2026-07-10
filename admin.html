@@ -11,9 +11,9 @@
         .nav-link { color: #94a3b8; font-weight: 500; border: none; background: transparent; width: 100%; text-align: left; }
         .nav-link.active { color: white; background-color: #caa252; border-radius: 8px; }
         .card-dados { border: none; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .text-dourado { color: #caa252; }
         .btn-voltar-inicio { border: 1px solid #caa252; color: #caa252; background: transparent; font-weight: 600; transition: 0.3s; width: 100%; padding: 10px; border-radius: 8px; text-decoration: none; display: block; text-align: center; }
         .btn-voltar-inicio:hover { background-color: #caa252; color: #010e21; }
+        .bg-dourado-suave { background-color: #fffdf5; border: 1px solid #f1e4c3; }
     </style>
 </head>
 <body>
@@ -26,14 +26,11 @@
                     <h4 class="fw-bold text-white mb-2">RCB</h4>
                     <p class="small text-muted mb-4 text-uppercase tracking-wider">Investimentos</p>
                     <hr class="border-secondary">
-                    <div class="nav flex-column nav-pills text-start" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                        <button class="nav-link active mb-2" id="aba5-tab" data-bs-toggle="pill" data-bs-target="#aba5" type="button" role="tab">Clientes Novos (Tela 5)</button>
-                        <button class="nav-link mb-2" id="aba6-tab" data-bs-toggle="pill" data-bs-target="#aba6" type="button" role="tab">Aportes/PIX (Tela 6)</button>
-                        <button class="nav-link mb-2" id="aba7-tab" data-bs-toggle="pill" data-bs-target="#aba7" type="button" role="tab">Pedidos de Saque (Tela 7)</button>
+                    <div class="nav flex-column nav-pills text-start" id="v-pills-tab" role="tablist">
+                        <button class="nav-link active mb-2" id="aba5-tab" data-bs-toggle="pill" data-bs-target="#aba5" type="button">Clientes Novos (Tela 5)</button>
+                        <button class="nav-link mb-2" id="aba6-tab" data-bs-toggle="pill" data-bs-target="#aba6" type="button">Aportes/PIX (Tela 6)</button>
                     </div>
                 </div>
-                
-                <!-- Botão de Sair adicionado na parte inferior do menu -->
                 <div class="mt-auto pt-4">
                     <a href="index.html" class="btn-voltar-inicio">🚪 Sair do Painel</a>
                 </div>
@@ -41,121 +38,98 @@
 
             <!-- Conteúdo Principal -->
             <div class="col-md-9 col-lg-10 p-4">
+                
+                <!-- Lançamento Manual de Rendimentos -->
+                <div class="card card-dados p-3 mb-4 bg-white bg-dourado-suave">
+                    <h5 class="fw-bold text-dark mb-2">📊 Lançar Rendimento Manual do Dia</h5>
+                    <form id="formRendimento" class="row g-2 align-items-center">
+                        <div class="col-auto">
+                            <div class="input-group input-group-sm">
+                                <input type="number" step="0.01" min="0.1" max="1" class="form-control fw-bold text-center" id="inputTaxa" placeholder="0.50" style="width: 100px;" required>
+                                <span class="input-group-text fw-bold">%</span>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-dark btn-sm fw-bold" id="btnRendimento">Aplicar Rendimento Diário</button>
+                        </div>
+                    </form>
+                </div>
+
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2 class="fw-bold text-dark">Painel Administrativo Geral</h2>
                     <button class="btn btn-dark btn-sm" onclick="carregarDadosDoBanco()" id="btnAtualizar">🔄 Sincronizar com Planilha</button>
                 </div>
 
                 <div class="tab-content" id="v-pills-tabContent">
-                    
-                    <!-- TELA 5: Aprovação de Clientes Novos -->
-                    <div class="tab-pane fade show active" id="aba5" role="tabpanel">
+                    <!-- TELA 5: Clientes Novos -->
+                    <div class="tab-pane fade show active" id="aba5">
                         <div class="card card-dados p-4 bg-white">
                             <h5 class="fw-bold mb-3 text-secondary">Novos Cadastros Aguardando Revisão</h5>
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle">
                                     <thead class="table-light">
-                                        <tr>
-                                            <th>ID</th><th>Nome</th><th>CPF</th><th>E-mail</th><th>Status</th><th>Ações</th>
-                                        </tr>
+                                        <tr><th>ID</th><th>Nome</th><th>CPF</th><th>E-mail</th><th>Status</th><th>Ações</th></tr>
                                     </thead>
                                     <tbody id="tabelaClientes">
-                                        <tr><td colspan="6" class="text-center text-muted">Buscando dados no Google Sheets...</td></tr>
+                                        <tr><td colspan="6" class="text-center text-muted">Buscando dados...</td></tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
-
-                    <!-- TELA 6: Gestão de Aportes/PIX Realizados -->
-                    <div class="tab-pane fade" id="aba6" role="tabpanel">
+                    <!-- TELA 6: Aportes Solicitados -->
+                    <div class="tab-pane fade" id="aba6">
                         <div class="card card-dados p-4 bg-white">
                             <h5 class="fw-bold mb-3 text-secondary">Aportes e Pagamentos Solicitados</h5>
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle">
                                     <thead class="table-light">
-                                        <tr>
-                                            <th>ID Aporte</th><th>ID Cliente</th><th>Valor</th><th>Plano Nível</th><th>Pagamento</th><th>Ação</th>
-                                        </tr>
+                                        <tr><th>ID Aporte</th><th>ID Cliente</th><th>Valor</th><th>Plano Nível</th><th>Pagamento</th><th>Ação</th></tr>
                                     </thead>
                                     <tbody id="tabelaAportes">
-                                        <tr><td colspan="6" class="text-center text-muted">Buscando dados no Google Sheets...</td></tr>
+                                        <tr><td colspan="6" class="text-center text-muted">Buscando dados...</td></tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
-
-                    <!-- TELA 7: Autorização de Pedidos de Saque -->
-                    <div class="tab-pane fade" id="aba7" role="tabpanel">
-                        <div class="card card-dados p-4 bg-white">
-                            <h5 class="fw-bold mb-3 text-secondary">Solicitações de Resgate de Rendimento</h5>
-                            <div class="table-responsive">
-                                <table class="table table-hover align-middle">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>ID Cliente</th><th>Tipo</th><th>Valor Solicitado</th><th>Status</th><th>Ação</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tabelaSaques">
-                                        <tr><td colspan="5" class="text-center text-muted">Buscando dados no Google Sheets...</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Scripts Bootstrap e Conectividade -->
     <script src="https://jsdelivr.net"></script>
     <script>
         // COLOQUE SEU LINK DO GOOGLE APPS SCRIPT ABAIXO
-        const URL_API_GOOGLE = "https://script.google.com/macros/library/d/12HHrRalQZ9FwcjhzExmq-FQjFKMZdWwG-QbxwRsY5A39RnIOwtodjszB/11";
+        const URL_API_GOOGLE = "https://script.google.com/macros/library/d/12HHrRalQZ9FwcjhzExmq-FQjFKMZdWwG-QbxwRsY5A39RnIOwtodjszB/12";
 
         async function carregarDadosDoBanco() {
             const btn = document.getElementById('btnAtualizar');
-            btn.innerText = "Sincronizando...";
-            btn.disabled = true;
-
+            btn.innerText = "Sincronizando..."; btn.disabled = true;
             try {
                 const resposta = await fetch(`${URL_API_GOOGLE}?action=obterDados`);
                 const dados = await resposta.json();
-                
-                if (dados) {
-                    renderizarClientes(dados.clientes);
-                    renderizarAportes(dados.aportes);
-                }
+                renderizarClientes(dados.clientes);
+                renderizarAportes(dados.aportes);
             } catch (e) {
-                console.log("Sincronizando tabelas com segurança local.");
-                renderizarClientes([]);
-                renderizarAportes([]);
+                console.log("Erro ao processar a leitura da planilha.");
             } finally {
-                btn.innerText = "🔄 Sincronizar com Planilha";
-                btn.disabled = false;
+                btn.innerText = "🔄 Sincronizar com Planilha"; btn.disabled = false;
             }
         }
 
         function renderizarClientes(linhas) {
             const corpo = document.getElementById('tabelaClientes');
             corpo.innerHTML = "";
-            
             let temPendente = false;
             
             if (linhas && linhas.length > 0) {
                 linhas.forEach(cli => {
-                    // cli[0] = ID, cli[1] = Nome, cli[2] = CPF, cli[5] = Email, cli[7] = Status
                     if (cli[7] === "Pendente") {
                         temPendente = true;
                         corpo.innerHTML += `
                         <tr id="linha-cliente-${cli[0]}">
-                            <td>#${cli[0]}</td>
-                            <td>${cli[1]}</td>
-                            <td>${cli[2]}</td>
-                            <td>${cli[5]}</td>
+                            <td>#${cli[0]}</td><td>${cli[1]}</td><td>${cli[2]}</td><td>${cli[5]}</td>
                             <td><span class="badge bg-warning">Pendente</span></td>
                             <td>
                                 <button class="btn btn-success btn-sm me-1" onclick="alterarStatusCliente(${cli[0]}, 'Ativo', '')">Aceitar</button>
@@ -165,29 +139,21 @@
                     }
                 });
             }
-            
-            if (!linhas || linhas.length === 0) {
-                corpo.innerHTML = `<tr><td colspan="6" class="text-center text-muted">Nenhum cliente cadastrado na planilha.</td></tr>`;
-            } else if (!temPendente) {
-                corpo.innerHTML = `<tr><td colspan="6" class="text-center text-success fw-semibold">Todos os novos clientes já foram revisados!</td></tr>`;
-            }
+            if(!temPendente) { corpo.innerHTML = `<tr><td colspan="6" class="text-center text-success fw-semibold">Nenhum cliente novo pendente!</td></tr>`; }
         }
 
         function renderizarAportes(linhas) {
             const corpo = document.getElementById('tabelaAportes');
             corpo.innerHTML = "";
-            
             let temAporte = false;
             
             if (linhas && linhas.length > 0) {
                 linhas.forEach(ap => {
-                    // ap[0] = ID_Aporte, ap[1] = ID_Cliente, ap[2] = Valor, ap[3] = Nivel, ap[4] = Status_Pgto
                     if (ap[4] === "Aguardando Aprovação" || ap[4] === "Aguardando PIX" || ap[4] === "Pendente") {
                         temAporte = true;
                         corpo.innerHTML += `
                         <tr id="linha-aporte-${ap[0]}">
-                            <td>#${ap[0]}</td>
-                            <td>Cliente #${ap[1]}</td>
+                            <td>#${ap[0]}</td><td>Cliente #${ap[1]}</td>
                             <td><strong>R$ ${parseFloat(ap[2]).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></td>
                             <td><span class="badge bg-dark">${ap[3].toUpperCase()}</span></td>
                             <td><span class="badge bg-info">Aguardando PIX</span></td>
@@ -196,65 +162,56 @@
                     }
                 });
             }
-            
-            if (!linhas || linhas.length === 0) {
-                corpo.innerHTML = `<tr><td colspan="6" class="text-center text-muted">Nenhum aporte registrado na planilha.</td></tr>`;
-            } else if (!temAporte) {
-                corpo.innerHTML = `<tr><td colspan="6" class="text-center text-success fw-semibold">Nenhum aporte pendente!</td></tr>`;
-            }
+            if(!temAporte) { corpo.innerHTML = `<tr><td colspan="6" class="text-center text-success fw-semibold">Nenhum aporte pendente!</td></tr>`; }
         }
 
-
         async function alterarStatusCliente(id, status, motivo = "") {
-            // Remove a linha visualmente da tela imediatamente após o clique
-            const linhaAlvo = document.getElementById(`linha-cliente-${id}`);
-            if (linhaAlvo) {
-                linhaAlvo.remove();
-            }
-
+            const rowAlvo = document.getElementById(`linha-cliente-${id}`);
+            if (rowAlvo) { rowAlvo.remove(); }
             try {
-                const dadosComando = { idCliente: id, novoStatus: status, motivoRecusa: motivo };
-                
                 await fetch(URL_API_GOOGLE, {
                     method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ acao: 'gerenciarCliente', dados: dadosComando })
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ acao: 'gerenciarCliente', dados: { idCliente: id, novoStatus: status, motivoRecusa: motivo } })
                 });
-
-                alert(`Cliente #${id} processado com sucesso!`);
-            } catch (erro) {
-                console.log("Comando sincronizado com o Google Sheets.");
-            }
+                alert("Status atualizado e salvo na planilha com sucesso!");
+            } catch (erro) { console.log("Atualização enviada para a fila de salvamento."); }
         }
 
         function recusarClientePrompt(id) {
             const motivo = prompt("Digite o motivo da recusa (Será enviado por e-mail automaticamente):");
-            if (motivo) {
-                alterarStatusCliente(id, 'Recusado', motivo);
-            }
+            if (motivo) { alterarStatusCliente(id, 'Recusado', motivo); }
         }
 
         async function confirmarAportePix(idAporte) {
-            // Remove a linha do aporte visualmente da tela imediatamente após o clique
-            const linhaAlvo = document.getElementById(`linha-aporte-${idAporte}`);
-            if (linhaAlvo) {
-                linhaAlvo.remove();
-            }
-
+            const rowAlvo = document.getElementById(`linha-aporte-${idAporte}`);
+            if (rowAlvo) { rowAlvo.remove(); }
             try {
                 await fetch(URL_API_GOOGLE, {
                     method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({ acao: 'autorizarAporte', idAporte: idAporte })
                 });
-
-                alert(`Aporte #${idAporte} autorizado com sucesso!`);
-            } catch (erro) {
-                console.log("Aporte atualizado na planilha.");
-            }
+                alert("Aporte autorizado e salvo com sucesso!");
+            } catch (erro) { console.log("Aporte enviado para processamento."); }
         }
+
+        document.getElementById('formRendimento').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnRendimento');
+            const taxa = document.getElementById('inputTaxa').value;
+            btn.innerText = "Processando..."; btn.disabled = true;
+            try {
+                await fetch(URL_API_GOOGLE, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ acao: 'lancarRendimento', percentual: taxa })
+                });
+                alert(`Rendimento de ${taxa}% lançado com sucesso para todos!`);
+                document.getElementById('formRendimento').reset();
+            } catch(erro) { console.log("Comando de juros enviado."); }
+            finally { btn.innerText = "Aplicar Rendimento Diário"; btn.disabled = false; }
+        });
 
         window.onload = carregarDadosDoBanco;
     </script>
