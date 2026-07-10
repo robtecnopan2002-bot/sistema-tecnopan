@@ -9,7 +9,6 @@
         body { background-color: #f4f6f9; font-family: 'Segoe UI', sans-serif; }
         .navbar-sistema { background-color: #010e21; color: white; }
         .card-financeiro { border: none; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); background: white; transition: 0.3s; }
-        .card-financeiro:hover { transform: translateY(-2px); }
         .valor-destaque { font-size: 2.2rem; font-weight: 700; color: #212529; }
         .badge-nivel-atual { font-size: 1.1rem; padding: 8px 16px; border-radius: 30px; font-weight: bold; }
         .btn-saque { background-color: #dc3545; color: white; font-weight: bold; border: none; border-radius: 10px; width: 100%; padding: 12px; transition: 0.3s; }
@@ -17,7 +16,6 @@
         .btn-reinvestir { background-color: #00c853; color: white; font-weight: bold; border: none; border-radius: 10px; width: 100%; padding: 12px; transition: 0.3s; text-decoration: none; display: inline-block; }
         .btn-reinvestir:hover { background-color: #009624; color: white; }
         .btn-home-dourado { background-color: #caa252; color: #010e21; font-weight: bold; border: none; border-radius: 10px; width: 100%; padding: 12px; transition: 0.3s; text-decoration: none; display: inline-block; }
-        .btn-home-dourado:hover { background-color: #b08d49; color: #010e21; }
     </style>
 </head>
 <body>
@@ -34,21 +32,16 @@
             <div class="col-12 text-center text-md-start d-md-flex align-items-center justify-content-between bg-white p-3 rounded-4 shadow-sm">
                 <div>
                     <h5 class="mb-1 text-muted fw-semibold">Status da Conta</h5>
-                    <p class="mb-0 text-secondary small">Seu nível sobe automaticamente acumulando novos aportes aprovados.</p>
+                    <p class="mb-0 text-secondary small">Seu nível subirá com novos aportes aprovados.</p>
                 </div>
-                <div class="mt-3 mt-md-0">
-                    <span class="badge bg-secondary badge-nivel-atual" id="txtNivelAtual">SINCRO...</span>
-                </div>
+                <div><span class="badge bg-secondary badge-nivel-atual" id="txtNivelAtual">SINCRO...</span></div>
             </div>
         </div>
 
         <div class="row g-4 mb-4">
             <div class="col-md-6">
                 <div class="card card-financeiro p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="text-muted fw-bold small">TOTAL APORTADO CAPITAL</span>
-                        <span class="fs-4">💼</span>
-                    </div>
+                    <span class="text-muted fw-bold small mb-2">TOTAL APORTADO CAPITAL 💼</span>
                     <p class="valor-destaque mb-2" id="txtTotalAportado">R$ 0,00</p>
                     <div class="mt-2"><a href="aportes.html" class="btn-reinvestir text-center">Fazer Novo Aporte</a></div>
                 </div>
@@ -56,12 +49,15 @@
 
             <div class="col-md-6">
                 <div class="card card-financeiro p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="text-muted fw-bold small">RENDIMENTOS DISPONÍVEIS</span>
-                        <span class="fs-4 text-success">📈</span>
-                    </div>
+                    <span class="text-muted fw-bold small mb-2">RENDIMENTOS DISPONÍVEIS 📈</span>
                     <p class="valor-destaque text-success mb-2" id="txtTotalRendimentos">R$ 0,00</p>
-                    <div class="mt-2" id="areaBotaoSaque">
+                    
+                    <!-- NOVO CAMPO DE CHAVE PIX -->
+                    <div id="containerFormSaque">
+                        <div class="mb-2 text-start">
+                            <label class="form-label small fw-bold text-muted">Informe sua Chave PIX para Recebimento:</label>
+                            <input type="text" class="form-control form-control-sm text-center fw-bold text-dark border-danger" id="pixSaqueInput" placeholder="CPF, Celular, E-mail ou Aleatória">
+                        </div>
                         <button class="btn-saque" id="btnDispararSaque" onclick="solicitarSaqueLucro()">Solicitar Saque do Lucro</button>
                     </div>
                 </div>
@@ -72,8 +68,7 @@
     <iframe name="iframeOcultoSaque" id="iframeOcultoSaque" style="display:none;"></iframe>
 
     <script>
-        const URL_API_GOOGLE = "https://script.google.com/macros/s/AKfycbzCW2xut-5BU2U7eNVZF2Mw4ZUlTf3uQg1L1zapow-OmIFXy4h56FZBHn0s3w5t4j0i/exec";
-        
+        const URL_API_GOOGLE = "https://script.google.com/macros/s/AKfycbzeebr6IN4IYQM8zS5ws4aWTr5LzUFFVB1tvMqLTVopjEblnSmnv06M5Bff96Gpn90o/exec";
         const idClienteLogado = localStorage.getItem('idCliente');
         const nomeClienteLogado = localStorage.getItem('nomeCliente');
         let saldoRendimentosLucro = 0;
@@ -95,29 +90,35 @@
             document.getElementById('txtTotalAportado').innerText = `R$ ${saldoAportesAtuais.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
             document.getElementById('txtTotalRendimentos').innerText = `R$ ${saldoRendimentos.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
             const txtNivel = document.getElementById('txtNivelAtual');
-            if (saldoAportesAtuais >= 5000) { txtNivel.innerText = "💎 DIAMANTE"; txtNivel.className = "badge bg-info text-dark badge-nivel-atual"; }
-            else if (saldoAportesAtuais >= 3000) { txtNivel.innerText = "👑 OURO"; txtNivel.className = "badge bg-warning text-dark badge-nivel-atual"; }
-            else if (saldoAportesAtuais >= 1000) { txtNivel.innerText = "⚪ PRATA"; txtNivel.className = "badge bg-light text-dark border badge-nivel-atual"; }
-            else if (saldoAportesAtuais >= 600) { txtNivel.innerText = "🟤 BRONZE"; txtNivel.className = "badge bg-warning text-white badge-nivel-atual"; }
-            else if (saldoAportesAtuais >= 300) { txtNivel.innerText = "🪙 COBRE"; txtNivel.className = "badge bg-secondary badge-nivel-atual"; }
-            else { txtNivel.innerText = "⚠️ AGUARDANDO APORTE"; txtNivel.className = "badge bg-danger badge-nivel-atual"; }
+            if (saldoAportesAtuais >= 5000) { txtNivel.innerText = "💎 DIAMANTE"; txtNivel.className = "badge bg-info text-dark"; }
+            else if (saldoAportesAtuais >= 3000) { txtNivel.innerText = "👑 OURO"; txtNivel.className = "badge bg-warning text-dark"; }
+            else if (saldoAportesAtuais >= 1000) { txtNivel.innerText = "⚪ PRATA"; txtNivel.className = "badge bg-light text-dark border"; }
+            else if (saldoAportesAtuais >= 600) { txtNivel.innerText = "🟤 BRONZE"; txtNivel.className = "badge bg-warning text-white"; }
+            else if (saldoAportesAtuais >= 300) { txtNivel.innerText = "🪙 COBRE"; txtNivel.className = "badge bg-secondary"; }
+            else { txtNivel.innerText = "⚠️ SEM APORTE"; txtNivel.className = "badge bg-danger"; }
         }
 
         function solicitarSaqueLucro() {
-            if (saldoRendimentosLucro <= 0) { alert("Você não possui saldo de rendimento disponível para saque."); return; }
-            const confirmacao = confirm(`Deseja solicitar o saque total de R$ ${saldoRendimentosLucro.toLocaleString('pt-BR', {minimumFractionDigits: 2})} dos seus rendimentos?`);
+            const chavePixDigitada = document.getElementById('pixSaqueInput').value.trim();
+            if (saldoRendimentosLucro <= 0) { alert("Você não possui lucros para saque."); return; }
+            if (!chavePixDigitada) { alert("Por favor, digite uma Chave PIX válida para receber o valor!"); return; }
             
-            if (confirmacao) {
-                const btn = document.getElementById('btnDispararSaque');
-                btn.innerText = "Processando..."; btn.disabled = true;
+            if (confirm(`Deseja sacar R$ ${saldoRendimentosLucro.toLocaleString('pt-BR', {minimumFractionDigits: 2})} para a chave PIX: ${chavePixDigitada}?`)) {
+                document.getElementById('btnDispararSaque').innerText = "Processando...";
+                document.getElementById('btnDispararSaque').disabled = true;
 
                 const formInvisivel = document.createElement('form');
                 formInvisivel.method = 'POST'; formInvisivel.action = URL_API_GOOGLE; formInvisivel.target = 'iframeOcultoSaque';
 
-                const dadosSaque = { acao: "solicitarSaqueSite", idCliente: idClienteLogado, valorSaque: saldoRendimentosLucro };
+                const dadosSaque = { 
+                    acao: "solicitarSaqueSite", 
+                    idCliente: idClienteLogado, 
+                    valorSaque: saldoRendimentosLucro,
+                    chavePix: chavePixDigitada // Envia a Chave PIX inserida pelo cliente
+                };
+                
                 const inputDados = document.createElement('input');
                 inputDados.type = 'hidden'; inputDados.name = 'dadosJSON'; inputDados.value = JSON.stringify(dadosSaque);
-                
                 formInvisivel.appendChild(inputDados); document.body.appendChild(formInvisivel);
                 formInvisivel.submit();
 
@@ -125,8 +126,8 @@
                     formInvisivel.remove();
                     document.getElementById('txtTotalRendimentos').innerText = "R$ 0,00";
                     saldoRendimentosLucro = 0;
-                    document.getElementById('areaBotaoSaque').innerHTML = `<a href="index.html" class="btn-home-dourado text-center">🏠 Voltar à Página Inicial</a>`;
-                    alert("Solicitação registrada com sucesso!");
+                    document.getElementById('containerFormSaque').innerHTML = `<a href="index.html" class="btn-home-dourado text-center shadow-sm">🏠 Voltar à Página Inicial</a>`;
+                    alert("Solicitação enviada com sucesso!");
                 }, 1200);
             }
         }
