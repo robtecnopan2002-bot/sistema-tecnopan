@@ -16,6 +16,8 @@
         .btn-saque:hover { background-color: #bb2d3b; }
         .btn-reinvestir { background-color: #00c853; color: white; font-weight: bold; border: none; border-radius: 10px; width: 100%; padding: 12px; transition: 0.3s; text-decoration: none; display: inline-block; }
         .btn-reinvestir:hover { background-color: #009624; color: white; }
+        .btn-home-dourado { background-color: #caa252; color: #010e21; font-weight: bold; border: none; border-radius: 10px; width: 100%; padding: 12px; transition: 0.3s; text-decoration: none; display: inline-block; }
+        .btn-home-dourado:hover { background-color: #b08d49; color: #010e21; }
     </style>
 </head>
 <body>
@@ -44,6 +46,7 @@
 
         <!-- Cartões de Saldos Separados -->
         <div class="row g-4 mb-4">
+            <!-- Card de Aportes -->
             <div class="col-md-6">
                 <div class="card card-financeiro p-4">
                     <div class="d-flex justify-content-between align-items-center mb-2">
@@ -57,6 +60,7 @@
                 </div>
             </div>
 
+            <!-- Card de Rendimentos -->
             <div class="col-md-6">
                 <div class="card card-financeiro p-4">
                     <div class="d-flex justify-content-between align-items-center mb-2">
@@ -64,7 +68,8 @@
                         <span class="fs-4 text-success">📈</span>
                     </div>
                     <p class="valor-destaque text-success mb-2" id="txtTotalRendimentos">R$ 0,00</p>
-                    <div class="mt-2">
+                    <div class="mt-2" id="areaBotaoSaque">
+                        <!-- O botão vai mudar dinamicamente aqui -->
                         <button class="btn-saque" onclick="solicitarSaqueLucro()">Solicitar Saque do Lucro</button>
                     </div>
                 </div>
@@ -87,7 +92,7 @@
 
     <script>
         // COLOQUE SEU LINK DO GOOGLE APPS SCRIPT ABAIXO
-        const URL_API_GOOGLE = "https://script.google.com/macros/s/AKfycbxQ64NVWG-EPWBWHGsjOe2IdbyysrL59-qnH6jNNKRMq8hCLfrn_8uLYxEjjwOgBQz3/exec";
+        const URL_API_GOOGLE = "https://script.google.com/macros/s/AKfycbzvYHK_EWsjqK64laLZ6d0pU-mMx1f2zvGmUWMXLQVnJoTp1tpxdX2oWG8FO3O2R-Rk/exec";
         
         const idClienteLogado = localStorage.getItem('idCliente');
         const nomeClienteLogado = localStorage.getItem('nomeCliente');
@@ -143,14 +148,26 @@
             }
         }
 
+        // INTELIGÊNCIA DO SAQUE: Zera o campo e muda o botão para a Home
         function solicitarSaqueLucro() {
             if (saldoRendimentosLucro <= 0) {
                 alert("Você não possui saldo de rendimento disponível para saque no momento.");
                 return;
             }
+            
             const confirmacao = confirm(`Deseja solicitar o saque total de R$ ${saldoRendimentosLucro.toLocaleString('pt-BR', {minimumFractionDigits: 2})} dos seus rendimentos?`);
+            
             if (confirmacao) {
-                alert("Solicitação de saque enviada com sucesso ao administrador!");
+                // 1. Zera visualmente o campo de rendimentos na tela do cliente
+                document.getElementById('txtTotalRendimentos').innerText = "R$ 0,00";
+                saldoRendimentosLucro = 0;
+                
+                // 2. Transforma o botão vermelho de Saque em um botão dourado de voltar para a Home
+                document.getElementById('areaBotaoSaque').innerHTML = `
+                    <a href="index.html" class="btn-home-dourado text-center shadow-sm">🏠 Voltar à Página Inicial</a>
+                `;
+                
+                alert("Solicitação de saque enviada com sucesso ao administrador! O valor foi returado do seu saldo disponível.");
             }
         }
 
