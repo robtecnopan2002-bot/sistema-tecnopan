@@ -32,15 +32,11 @@
                         <button class="nav-link mb-2" id="aba7-tab" data-bs-toggle="pill" data-bs-target="#aba7" type="button">Pedidos de Saque (Tela 7)</button>
                     </div>
                 </div>
-                <div class="mt-auto pt-4">
-                    <a href="index.html" class="btn-voltar-inicio">🚪 Sair do Painel</a>
-                </div>
+                <div class="mt-auto pt-4"><a href="index.html" class="btn-voltar-inicio">🚪 Sair do Painel</a></div>
             </div>
 
             <!-- Conteúdo Principal -->
             <div class="col-md-9 col-lg-10 p-4">
-                
-                <!-- Lançamento Manual de Rendimentos -->
                 <div class="card card-dados p-3 mb-4 bg-white bg-dourado-suave">
                     <h5 class="fw-bold text-dark mb-2">📊 Lançar Rendimento Manual do Dia</h5>
                     <form id="formRendimento" class="row g-2 align-items-center">
@@ -50,9 +46,7 @@
                                 <span class="input-group-text fw-bold">%</span>
                             </div>
                         </div>
-                        <div class="col-auto">
-                            <button type="submit" class="btn btn-dark btn-sm fw-bold" id="btnRendimento">Aplicar Rendimento Diário</button>
-                        </div>
+                        <div class="col-auto"><button type="submit" class="btn btn-dark btn-sm fw-bold" id="btnRendimento">Aplicar Rendimento Diário</button></div>
                     </form>
                 </div>
 
@@ -62,52 +56,40 @@
                 </div>
 
                 <div class="tab-content" id="v-pills-tabContent">
-                    <!-- TELA 5: Clientes Novos -->
+                    <!-- TELA 5 -->
                     <div class="tab-pane fade show active" id="aba5">
                         <div class="card card-dados p-4 bg-white">
                             <h5 class="fw-bold mb-3 text-secondary">Novos Cadastros Aguardando Revisão</h5>
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle">
-                                    <thead class="table-light">
-                                        <tr><th>ID</th><th>Nome</th><th>CPF</th><th>E-mail</th><th>Status</th><th>Ações</th></tr>
-                                    </thead>
-                                    <tbody id="tabelaClientes">
-                                        <tr><td colspan="6" class="text-center text-muted">Buscando dados...</td></tr>
-                                    </tbody>
+                                    <thead class="table-light"><tr><th>ID</th><th>Nome</th><th>CPF</th><th>E-mail</th><th>Status</th><th>Ações</th></tr></thead>
+                                    <tbody id="tabelaClientes"><tr><td colspan="6" class="text-center text-muted">Buscando dados...</td></tr></tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- TELA 6: Aportes Solicitados -->
+                    <!-- TELA 6 -->
                     <div class="tab-pane fade" id="aba6">
                         <div class="card card-dados p-4 bg-white">
                             <h5 class="fw-bold mb-3 text-secondary">Aportes e Pagamentos Solicitados</h5>
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle">
-                                    <thead class="table-light">
-                                        <tr><th>ID Aporte</th><th>ID Cliente</th><th>Valor</th><th>Plano Nível</th><th>Pagamento</th><th>Ação</th></tr>
-                                    </thead>
-                                    <tbody id="tabelaAportes">
-                                        <tr><td colspan="6" class="text-center text-muted">Buscando dados...</td></tr>
-                                    </tbody>
+                                    <thead class="table-light"><tr><th>ID Aporte</th><th>ID Cliente</th><th>Valor</th><th>Plano Nível</th><th>Pagamento</th><th>Ação</th></tr></thead>
+                                    <tbody id="tabelaAportes"><tr><td colspan="6" class="text-center text-muted">Buscando dados...</td></tr></tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
 
-                    <!-- TELA 7: Saques Solicitados (ADICIONADO E CORRIGIDO) -->
+                    <!-- TELA 7 ATUALIZADA COM COLUNA CHAVE PIX -->
                     <div class="tab-pane fade" id="aba7">
                         <div class="card card-dados p-4 bg-white">
                             <h5 class="fw-bold mb-3 text-secondary">Solicitações de Resgate de Rendimento</h5>
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle">
-                                    <thead class="table-light">
-                                        <tr><th>ID Saque</th><th>ID Cliente</th><th>Valor do Lucro</th><th>Status</th><th>Ação</th></tr>
-                                    </thead>
-                                    <tbody id="tabelaSaques">
-                                        <tr><td colspan="5" class="text-center text-muted">Buscando dados...</td></tr>
-                                    </tbody>
+                                    <thead class="table-light"><tr><th>ID Saque</th><th>ID Cliente</th><th>Valor do Lucro</th><th>Chave PIX Informada</th><th>Status</th><th>Ação</th></tr></thead>
+                                    <tbody id="tabelaSaques"><tr><td colspan="6" class="text-center text-muted">Buscando dados...</td></tr></tbody>
                                 </table>
                             </div>
                         </div>
@@ -117,10 +99,12 @@
         </div>
     </div>
 
+    <!-- Túnel invisível de gravação para aprovar saques contornando o CORS -->
+    <iframe name="iframeOcultoAprovaSaque" id="iframeOcultoAprovaSaque" style="display:none;"></iframe>
     <script src="https://jsdelivr.net"></script>
     <script>
         // COLOQUE SEU LINK DO GOOGLE APPS SCRIPT ABAIXO
-        const URL_API_GOOGLE = "https://script.google.com/macros/s/AKfycbzCW2xut-5BU2U7eNVZF2Mw4ZUlTf3uQg1L1zapow-OmIFXy4h56FZBHn0s3w5t4j0i/exec";
+        const URL_API_GOOGLE = "https://script.google.com/macros/s/AKfycbzeebr6IN4IYQM8zS5ws4aWTr5LzUFFVB1tvMqLTVopjEblnSmnv06M5Bff96Gpn90o/exec";
 
         async function carregarDadosDoBanco() {
             const btn = document.getElementById('btnAtualizar');
@@ -131,29 +115,17 @@
                 renderizarClientes(dados.clientes);
                 renderizarAportes(dados.aportes);
                 renderizarSaques(dados.saques);
-            } catch (e) {
-                console.log("Erro ao carregar dados.");
-            } finally {
-                btn.innerText = "🔄 Sincronizar com Planilha"; btn.disabled = false;
-            }
+            } catch (e) { console.log("Sincronizando..."); }
+            finally { btn.innerText = "🔄 Sincronizar com Planilha"; btn.disabled = false; }
         }
 
         function renderizarClientes(linhas) {
-            const corpo = document.getElementById('tabelaClientes'); corpo.innerHTML = "";
-            let temPendente = false;
+            const corpo = document.getElementById('tabelaClientes'); corpo.innerHTML = ""; let temPendente = false;
             if (linhas && linhas.length > 0) {
                 linhas.forEach(cli => {
                     if (cli[7] === "Pendente") {
                         temPendente = true;
-                        corpo.innerHTML += `
-                        <tr id="linha-cliente-${cli[0]}">
-                            <td>#${cli[0]}</td><td>${cli[1]}</td><td>${cli[2]}</td><td>${cli[5]}</td>
-                            <td><span class="badge bg-warning">Pendente</span></td>
-                            <td>
-                                <button class="btn btn-success btn-sm me-1" onclick="alterarStatusCliente(${cli[0]}, 'Ativo', '')">Aceitar</button>
-                                <button class="btn btn-danger btn-sm" onclick="recusarClientePrompt(${cli[0]})">Recusar</button>
-                            </td>
-                        </tr>`;
+                        corpo.innerHTML += `<tr id="linha-cliente-${cli[0]}"><td>#${cli[0]}</td><td>${cli[1]}</td><td>${cli[2]}</td><td>${cli[5]}</td><td><span class="badge bg-warning">Pendente</span></td><td><button class="btn btn-success btn-sm me-1" onclick="alterarStatusCliente(${cli[0]}, 'Ativo', '')">Aceitar</button><button class="btn btn-danger btn-sm" onclick="recusarClientePrompt(${cli[0]})">Recusar</button></td></tr>`;
                     }
                 });
             }
@@ -161,103 +133,25 @@
         }
 
         function renderizarAportes(linhas) {
-            const corpo = document.getElementById('tabelaAportes'); corpo.innerHTML = "";
-            let temAporte = false;
-            if (linhas && linhas.length > 0) {
+            const corpo = document.getElementById('tabelaAportes'); corpo.innerHTML = ""; let temAporte = false;
+            if (linhas && lines.length > 0) {
                 linhas.forEach(ap => {
-                    if (ap[4] === "Aguardando Aprovação" || ap[4] === "Aguardando PIX" || ap[4] === "Pendente") {
+                    if (ap[4] === "Aguardando PIX" || ap[4] === "Pendente") {
                         temAporte = true;
-                        corpo.innerHTML += `
-                        <tr id="linha-aporte-${ap[0]}">
-                            <td>#${ap[0]}</td><td>Cliente #${ap[1]}</td>
-                            <td><strong>R$ ${parseFloat(ap[2]).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></td>
-                            <td><span class="badge bg-dark">${ap[3].toUpperCase()}</span></td>
-                            <td><span class="badge bg-info">Aguardando PIX</span></td>
-                            <td><button class="btn btn-primary btn-sm" onclick="confirmarAportePix(${ap[0]})">Autorizar Cliente</button></td>
-                        </tr>`;
+                        corpo.innerHTML += `<tr id="linha-aporte-${ap[0]}"><td>#${ap[0]}</td><td>Cliente #${ap[1]}</td><td><strong>R$ ${parseFloat(ap[2]).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></td><td><span class="badge bg-dark">${ap[3].toUpperCase()}</span></td><td><span class="badge bg-info">Aguardando PIX</span></td><td><button class="btn btn-primary btn-sm" onclick="confirmarAportePix(${ap[0]})">Autorizar Cliente</button></td></tr>`;
                     }
                 });
             }
             if(!temAporte) { corpo.innerHTML = `<tr><td colspan="6" class="text-center text-success fw-semibold">Nenhum aporte pendente!</td></tr>`; }
         }
 
-        // NOVA FUNÇÃO: Renderiza os saques da aba Saques
+        // LEITURA DOS SAQUES: Puxa o ID(0), Cliente(1), Valor(2), Chave PIX(3), Status(4)
         function renderizarSaques(linhas) {
-            const corpo = document.getElementById('tabelaSaques'); corpo.innerHTML = "";
-            let temSaque = false;
+            const corpo = document.getElementById('tabelaSaques'); corpo.innerHTML = ""; let temSaque = false;
             if (linhas && linhas.length > 0) {
                 linhas.forEach(saq => {
-                    if (saq[3] === "Pendente") {
+                    if (saq[4] === "Pendente") {
                         temSaque = true;
                         corpo.innerHTML += `
                         <tr id="linha-saque-${saq[0]}">
-                            <td>#${saq[0]}</td><td>Cliente #${saq[1]}</td>
-                            <td><strong class="text-danger">R$ ${parseFloat(saq[2]).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></td>
-                            <td><span class="badge bg-warning">Aguardando PIX</span></td>
-                            <td><button class="btn btn-danger btn-sm fw-bold" onclick="finalizarPixSaque(${saq[0]})">Efetuar PIX Saque</button></td>
-                        </tr>`;
-                    }
-                });
-            }
-            if(!temSaque) { corpo.innerHTML = `<tr><td colspan="5" class="text-center text-success fw-semibold">Nenhum pedido de saque pendente!</td></tr>`; }
-        }
-
-        async function finalizarPixSaque(idSaque) {
-            const rowAlvo = document.getElementById(`linha-saque-${idSaque}`);
-            if (rowAlvo) { rowAlvo.remove(); }
-            try {
-                // Envia o comando para mudar o status do saque de Pendente para Aprovado no Sheets
-                await fetch(URL_API_GOOGLE, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ acao: 'autorizarSaque', idSaque: idSaque })
-                });
-                alert(`Saque #${idSaque} marcado como Pago com sucesso!`);
-            } catch (erro) { console.log("Saque autorizado."); }
-        }
-
-        async function alterarStatusCliente(id, status, motivo = "") {
-            const rowAlvo = document.getElementById(`linha-cliente-${id}`); if (rowAlvo) { rowAlvo.remove(); }
-            try {
-                await fetch(URL_API_GOOGLE, {
-                    method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ acao: 'gerenciarCliente', dados: { idCliente: id, novoStatus: status, motivoRecusa: motivo } })
-                });
-                alert("Status atualizado!");
-            } catch (erro) { console.log("Enviado."); }
-        }
-
-        function recusarClientePrompt(id) {
-            const motivo = prompt("Digite o motivo da recusa:");
-            if (motivo) { alterarStatusCliente(id, 'Recusado', motivo); }
-        }
-
-        async function confirmarAportePix(idAporte) {
-            const rowAlvo = document.getElementById(`linha-aporte-${idAporte}`); if (rowAlvo) { rowAlvo.remove(); }
-            try {
-                await fetch(URL_API_GOOGLE, {
-                    method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ acao: 'autorizarAporte', idAporte: idAporte })
-                });
-                alert("Aporte autorizado!");
-            } catch (erro) { console.log("Enviado."); }
-        }
-
-        document.getElementById('formRendimento').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('btnRendimento'); const taxa = document.getElementById('inputTaxa').value;
-            btn.innerText = "Processando..."; btn.disabled = true;
-            try {
-                await fetch(URL_API_GOOGLE, {
-                    method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ acao: 'lancarRendimento', percentual: taxa })
-                });
-                alert(`Rendimento de ${taxa}% lançado!`); document.getElementById('formRendimento').reset();
-            } catch(erro) { console.log("Enviado."); }
-            finally { btn.innerText = "Aplicar Rendimento Diário"; btn.disabled = false; }
-        });
-
-        window.onload = carregarDadosDoBanco;
-    </script>
-</body>
-</html>
+                            <td>#${saq[0]}</td><td>Cliente #${saq[1]}
