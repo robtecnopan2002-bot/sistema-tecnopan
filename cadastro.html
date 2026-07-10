@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - TecnoPan</title>
+    <link href="https://jsdelivr.net" rel="stylesheet">
+    <style>
+        body { background-color: #f1f3f5; min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Segoe UI', sans-serif; }
+        .card-cadastro { border: none; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 550px; background: white; padding: 30px; }
+        .btn-cadastro { background-color: #1e3c72; color: white; font-weight: bold; border: none; padding: 12px; border-radius: 10px; width: 100%; transition: 0.3s; }
+        .btn-cadastro:hover { background-color: #2a5298; color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="card-cadastro m-3">
+        <h3 class="text-center fw-bold mb-2 text-dark">Crie sua Conta</h3>
+        <p class="text-center text-muted small mb-4">Insira seus dados para começar a renderizar seu capital.</p>
+
+        <form id="formCadastro">
+            <div class="mb-3">
+                <label class="form-label small fw-bold">Nome Completo</label>
+                <input type="text" class="form-control" id="nome" placeholder="Digite seu nome completo" required>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label small fw-bold">CPF</label>
+                    <input type="text" class="form-control" id="cpf" placeholder="000.000.000-00" maxlength="14" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label small fw-bold">Telefone</label>
+                    <input type="text" class="form-control" id="telefone" placeholder="(00) 00000-0000" maxlength="15" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-5 mb-3">
+                    <label class="form-label small fw-bold">CEP</label>
+                    <input type="text" class="form-control" id="cep" placeholder="00000-000" maxlength="9" required>
+                </div>
+                <div class="col-md-7 mb-3">
+                    <label class="form-label small fw-bold">E-mail</label>
+                    <input type="email" class="form-control" id="email" placeholder="seuemail@provedor.com" required>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label small fw-bold">Senha de Acesso</label>
+                <input type="password" class="form-control" id="senha" placeholder="Crie uma senha segura" required>
+            </div>
+
+            <button type="submit" class="btn-cadastro mb-3" id="btnEnviar">Concluir Cadastro</button>
+            
+            <div class="text-center">
+                <a href="index.html" class="text-decoration-none small text-secondary">← Voltar para o Simulador</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Script de Integração e Formatação de Campos -->
+    <script>
+        // MÁSCARAS DE INPUTS (Formatação visual enquanto digita)
+        document.getElementById('cpf').addEventListener('input', e => {
+            e.target.value = e.target.value.replace(/\D/g, '').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+        });
+        document.getElementById('telefone').addEventListener('input', e => {
+            e.target.value = e.target.value.replace(/\D/g, '').replace(/^(\d{2})(\d)/g, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2');
+        });
+        document.getElementById('cep').addEventListener('input', e => {
+            e.target.value = e.target.value.replace(/\D/g, '').replace(/^(\d{5})(\d)/, '$1-$2');
+        });
+
+        // ENVIO DOS DADOS EM TEMPO REAL PARA A PLANILHA DO GOOGLE DRIVE
+        document.getElementById('formCadastro').addEventListener('submit', async (e) => {
+            e.preventDefault(); // Impede a página de recarregar
+            
+            const btn = document.getElementById('btnEnviar');
+            btn.innerText = "Processando cadastro...";
+            btn.disabled = true;
+
+            // Insira aqui a URL exata gerada no seu Google Apps Script
+            const URL_API_GOOGLE = "SUA_URL_DO_APP_DA_WEB_AQUI";
+
+            const dadosFormulario = {
+                nome: document.getElementById('nome').value,
+                cpf: document.getElementById('cpf').value,
+                telefone: document.getElementById('telefone').value,
+                cep: document.getElementById('cep').value,
+                email: document.getElementById('email').value,
+                senha: document.getElementById('senha').value
+            };
+
+            try {
+                // Faz o disparo em segundo plano para o Google Drive
+                const resposta = await fetch(URL_API_GOOGLE, {
+                    method: 'POST',
+                    mode: 'no-cors', // Necessário para evitar bloqueios de segurança do navegador (CORS) com o Google
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dadosFormulario)
+                });
+
+                // Como usamos 'no-cors', o navegador não lê a resposta de sucesso diretamente, 
+                // mas se chegou aqui sem disparar erro, os dados entraram na planilha.
+                alert("Cadastro realizado! Aguarde a liberação do administrador na planilha.");
+                document.getElementById('formCadastro').reset();
+                
+            </div> catch (erro) {
+                alert("Erro ao conectar com o servidor. Tente novamente.");
+                console.error(erro);
+            } finally {
+                btn.innerText = "Concluir Cadastro";
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
