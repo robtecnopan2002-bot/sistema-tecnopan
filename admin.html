@@ -139,23 +139,48 @@
             }
         }
 
-        function renderizarClientes(linhas) {
+               function renderizarClientes(linhas) {
             const corpo = document.getElementById('tabelaClientes');
             corpo.innerHTML = "";
             
+            let temPendente = false;
+            // Se houver dados vindos da planilha
+            if (linhas && linhas.length > 0) {
+                linhas.forEach(cli => {
+                    // Na nossa planilha: ID=coluna 0, Nome=coluna 1, CPF=coluna 2, Email=coluna 5, Status=coluna 7
+                    if (cli[7] === "Pendente") {
+                        temPendente = true;
+                        corpo.innerHTML += `
+                        <tr id="linha-cliente-${cli[0]}">
+                            <td>#${cli[0]}</td>
+                            <td>${cli[1]}</td>
+                            <td>${cli[2]}</td>
+                            <td>${cli[3]}</td>
+                            <td><span class="badge bg-warning">Pendente</span></td>
+                            <td>
+                                <button class="btn btn-success btn-sm me-1" onclick="alterarStatusCliente(${cli[0]}, 'Ativo', '')">Aceitar</button>
+                                <button class="btn btn-danger btn-sm" onclick="recusarClientePrompt(${cli[0]})">Recusar</button>
+                            </td>
+                        </tr>`;
+                    }
+                });
+            }
+            
+            // Só exibe o cliente exemplo se a planilha estiver 100% vazia de cadastros
             if (!linhas || linhas.length === 0) {
-                // Linha de exemplo idêntica à real que some ao clicar
                 corpo.innerHTML = `
                 <tr id="linha-cliente-1">
-                    <td>#1</td><td>Cliente Exemplo Pendente</td><td>111.222.333-44</td><td>cliente@email.com</td>
-                    <td><span class="badge bg-warning">Pendente</span></td>
+                    <td>#1</td><td>Cliente Exemplo Pendente</td><td>111.222.333-44</td><td>cliente@email.com</td><td><span class="badge bg-warning">Pendente</span></td>
                     <td>
                         <button class="btn btn-success btn-sm me-1" onclick="alterarStatusCliente(1, 'Ativo', '')">Aceitar</button>
                         <button class="btn btn-danger btn-sm" onclick="recusarClientePrompt(1)">Recusar</button>
                     </td>
                 </tr>`;
-                return;
+            } else if (!temPendente) {
+                corpo.innerHTML = `<tr><td colspan="6" class="text-center text-success fw-semibold">Todos os novos clientes já foram revisados!</td></tr>`;
             }
+        }
+
 
             linhas.forEach(cli => {
                 if (cli === "Pendente") {
