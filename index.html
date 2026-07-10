@@ -3,117 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro - TecnoPan</title>
+    <title>TecnoPan - Rendimentos Inteligentes</title>
+    <!-- Bootstrap CSS para um visual moderno e limpo -->
     <link href="https://jsdelivr.net" rel="stylesheet">
     <style>
-        body { background-color: #f1f3f5; min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Segoe UI', sans-serif; }
-        .card-cadastro { border: none; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 550px; background: white; padding: 30px; }
-        .btn-cadastro { background-color: #1e3c72; color: white; font-weight: bold; border: none; padding: 12px; border-radius: 10px; width: 100%; transition: 0.3s; }
-        .btn-cadastro:hover { background-color: #2a5298; color: white; }
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .hero-section { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 60px 0; border-radius: 0 0 30px 30px; }
+        .card-simulador { border: none; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .btn-principal { background-color: #00c853; color: white; font-weight: bold; border-radius: 10px; padding: 12px 30px; transition: 0.3s; text-decoration: none; display: inline-block; }
+        .btn-principal:hover { background-color: #009624; color: white; transform: translateY(-2px); }
+        .valores-destaque { font-size: 1.8rem; color: #1e3c72; font-weight: 700; }
     </style>
 </head>
 <body>
 
-    <div class="card-cadastro m-3">
-        <h3 class="text-center fw-bold mb-2 text-dark">Crie sua Conta</h3>
-        <p class="text-center text-muted small mb-4">Insira seus dados para começar a renderizar seu capital.</p>
+    <!-- Cabeçalho de Apresentação do Produto -->
+    <header class="hero-section text-center">
+        <div class="container px-4">
+            <h1 class="display-5 fw-bold mb-3">Multiplique Seu Capital Diariamente</h1>
+            <p class="lead mb-4">A tecnologia ideal para o seu crescimento financeiro. Rendimentos previsíveis de <strong>0,1% a 1,0% ao dia</strong> direto na sua conta.</p>
+        </div>
+    </header>
 
-        <form id="formCadastro">
-            <div class="mb-3">
-                <label class="form-label small fw-bold">Nome Completo</label>
-                <input type="text" class="form-control" id="nome" placeholder="Digite seu nome completo" required>
-            </div>
+    <!-- Área do Simulador Dinâmico -->
+    <main class="container my-5 px-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card card-simulador p-4 bg-white">
+                    <h3 class="text-center mb-4 fw-bold text-secondary">Simulador de Rendimentos</h3>
+                    
+                    <!-- Campo 1: Valor do Investimento -->
+                    <div class="mb-4">
+                        <label for="rangeValor" class="form-label fw-semibold d-flex justify-content-between">
+                            <span>Valor do Aporte:</span>
+                            <span class="text-primary fw-bold" id="txtValor">R$ 1.000</span>
+                        </label>
+                        <input type="range" class="form-range" id="rangeValor" min="300" max="5000" step="50" value="1000">
+                        <div class="d-flex justify-content-between text-muted small">
+                            <span>R$ 300 (Mínimo)</span>
+                            <span>R$ 5.000 (Máximo)</span>
+                        </div>
+                    </div>
 
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label small fw-bold">CPF</label>
-                    <input type="text" class="form-control" id="cpf" placeholder="000.000.000-00" maxlength="14" required>
+                    <!-- Campo 2: Taxa Diária -->
+                    <div class="mb-4">
+                        <label for="rangeTaxa" class="form-label fw-semibold d-flex justify-content-between">
+                            <span>Rendimento Diário Escolhido:</span>
+                            <span class="text-primary fw-bold" id="txtTaxa">0.5%</span>
+                        </label>
+                        <input type="range" class="form-range" id="rangeTaxa" min="0.1" max="1" step="0.1" value="0.5">
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Resultados da Simulação -->
+                    <div class="row text-center mb-4">
+                        <div class="col-6 border-end">
+                            <p class="text-muted mb-1 small uppercase fw-bold">Lucro por Dia (Est.)</p>
+                            <p class="valores-destaque text-success" id="lucroDiario">R$ 5,00</p>
+                        </div>
+                        <div class="col-6">
+                            <p class="text-muted mb-1 small uppercase fw-bold">Lucro Mensal (Est.)</p>
+                            <p class="valores-destaque text-success" id="lucroMensal">R$ 150,00</p>
+                        </div>
+                    </div>
+
+                    <!-- Botão de Ação Interligando com a Próxima Tela -->
+                    <div class="text-center d-grid">
+                        <a href="cadastro.html" class="btn-principal">Começar Agora e Rentabilizar</a>
+                    </div>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label small fw-bold">Telefone</label>
-                    <input type="text" class="form-control" id="telefone" placeholder="(00) 00000-0000" maxlength="15" required>
-                </div>
             </div>
+        </div>
+    </main>
 
-            <div class="row">
-                <div class="col-md-5 mb-3">
-                    <label class="form-label small fw-bold">CEP</label>
-                    <input type="text" class="form-control" id="cep" placeholder="00000-000" maxlength="9" required>
-                </div>
-                <div class="col-md-7 mb-3">
-                    <label class="form-label small fw-bold">E-mail</label>
-                    <input type="email" class="form-control" id="email" placeholder="seuemail@provedor.com" required>
-                </div>
-            </div>
-
-            <div class="mb-4">
-                <label class="form-label small fw-bold">Senha de Acesso</label>
-                <input type="password" class="form-control" id="senha" placeholder="Crie uma senha segura" required>
-            </div>
-
-            <button type="submit" class="btn-cadastro mb-3" id="btnEnviar">Concluir Cadastro</button>
-            
-            <div class="text-center">
-                <a href="index.html" class="text-decoration-none small text-secondary">← Voltar para o Simulador</a>
-            </div>
-        </form>
-    </div>
-
-    <!-- Script de Integração e Formatação de Campos -->
+    <!-- Lógica de Cálculo do Simulador -->
     <script>
-        // MÁSCARAS DE INPUTS (Formatação visual enquanto digita)
-        document.getElementById('cpf').addEventListener('input', e => {
-            e.target.value = e.target.value.replace(/\D/g, '').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-        });
-        document.getElementById('telefone').addEventListener('input', e => {
-            e.target.value = e.target.value.replace(/\D/g, '').replace(/^(\d{2})(\d)/g, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2');
-        });
-        document.getElementById('cep').addEventListener('input', e => {
-            e.target.value = e.target.value.replace(/\D/g, '').replace(/^(\d{5})(\d)/, '$1-$2');
-        });
+        const rangeValor = document.getElementById('rangeValor');
+        const rangeTaxa = document.getElementById('rangeTaxa');
+        const txtValor = document.getElementById('txtValor');
+        const txtTaxa = document.getElementById('txtTaxa');
+        const lucroDiario = document.getElementById('lucroDiario');
+        const lucroMensal = document.getElementById('lucroMensal');
 
-        // ENVIO DOS DADOS EM TEMPO REAL PARA A PLANILHA DO GOOGLE DRIVE
-        document.getElementById('formCadastro').addEventListener('submit', async (e) => {
-            e.preventDefault(); // Impede a página de recarregar
-            
-            const btn = document.getElementById('btnEnviar');
-            btn.innerText = "Processando cadastro...";
-            btn.disabled = true;
+        function calcularSimulacao() {
+            const valor = parseFloat(rangeValor.value);
+            const taxaDiaria = parseFloat(rangeTaxa.value) / 100;
 
-            // Insira aqui a URL exata gerada no seu Google Apps Script
-            const URL_API_GOOGLE = "SUA_URL_DO_APP_DA_WEB_AQUI";
+            // Formata o texto acima dos controles deslizantes
+            txtValor.innerText = `R$ ${valor.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}`;
+            txtTaxa.innerText = `${rangeTaxa.value}%`;
 
-            const dadosFormulario = {
-                nome: document.getElementById('nome').value,
-                cpf: document.getElementById('cpf').value,
-                telefone: document.getElementById('telefone').value,
-                cep: document.getElementById('cep').value,
-                email: document.getElementById('email').value,
-                senha: document.getElementById('senha').value
-            };
+            // Realiza os cálculos matemáticos base do rendimento
+            const ganhoDia = valor * taxaDiaria;
+            const ganhoMes = ganhoDia * 30; // Estimativa padrão comercial de 30 dias
 
-            try {
-                // Faz o disparo em segundo plano para o Google Drive
-                const resposta = await fetch(URL_API_GOOGLE, {
-                    method: 'POST',
-                    mode: 'no-cors', // Necessário para evitar bloqueios de segurança do navegador (CORS) com o Google
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(dadosFormulario)
-                });
+            // Atualiza os valores visuais na tela
+            lucroDiario.innerText = `R$ ${ganhoDia.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+            lucroMensal.innerText = `R$ ${ganhoMes.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+        }
 
-                // Como usamos 'no-cors', o navegador não lê a resposta de sucesso diretamente, 
-                // mas se chegou aqui sem disparar erro, os dados entraram na planilha.
-                alert("Cadastro realizado! Aguarde a liberação do administrador na planilha.");
-                document.getElementById('formCadastro').reset();
-                
-            </div> catch (erro) {
-                alert("Erro ao conectar com o servidor. Tente novamente.");
-                console.error(erro);
-            } finally {
-                btn.innerText = "Concluir Cadastro";
-                btn.disabled = false;
-            }
-        });
+        // Adiciona ouvintes para atualizar os cálculos sempre que o usuário mexer nas barras
+        rangeValor.addEventListener('input', calcularSimulacao);
+        rangeTaxa.addEventListener('input', calcularSimulacao);
     </script>
 </body>
 </html>
