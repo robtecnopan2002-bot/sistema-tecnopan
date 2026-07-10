@@ -3,25 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TecnoPan - Rendimentos Inteligentes</title>
+    <title>ROB Investimentos - Rendimentos Inteligentes</title>
     <!-- Bootstrap CSS para um visual moderno e limpo -->
     <link href="https://jsdelivr.net" rel="stylesheet">
     <style>
         body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .hero-section { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 60px 0; border-radius: 0 0 30px 30px; }
-        .card-simulador { border: none; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        /* Fundo azul escuro idêntico ao da sua logo */
+        .hero-section { background-color: #031530; color: white; padding: 50px 0; border-radius: 0 0 30px 30px; }
+        .logo-container img { max-width: 220px; height: auto; }
+        /* Cartão do simulador com bordas suaves e sombra leve */
+        .card-simulador { border: none; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        /* Cor dourada extraída da seta da logo ROB */
+        .text-dourado { color: #b08d49 !important; }
+        .range-dourado::-webkit-slider-thumb { background: #b08d49; }
+        .range-dourado::-moz-range-thumb { background: #b08d49; }
+        /* Botão verde de sucesso para conversão */
         .btn-principal { background-color: #00c853; color: white; font-weight: bold; border-radius: 10px; padding: 12px 30px; transition: 0.3s; text-decoration: none; display: inline-block; }
         .btn-principal:hover { background-color: #009624; color: white; transform: translateY(-2px); }
-        .valores-destaque { font-size: 1.8rem; color: #1e3c72; font-weight: 700; }
+        .valores-destaque { font-size: 1.8rem; color: #031530; font-weight: 700; }
     </style>
 </head>
 <body>
 
-    <!-- Cabeçalho de Apresentação do Produto -->
+    <!-- Cabeçalho Customizado com a Identidade Visual da ROB Investimentos -->
     <header class="hero-section text-center">
         <div class="container px-4">
-            <h1 class="display-5 fw-bold mb-3">Multiplique Seu Capital Diariamente</h1>
-            <p class="lead mb-4">A tecnologia ideal para o seu crescimento financeiro. Rendimentos previsíveis de <strong>0,1% a 1,0% ao dia</strong> direto na sua conta.</p>
+            <!-- Espaço para carregar a imagem da sua logo salva no GitHub -->
+            <div class="logo-container mb-3">
+                <img src="logo.png" alt="ROB Investimentos" id="logoRob">
+            </div>
+            <h1 class="display-6 fw-bold mb-3">Multiplique Seu Capital Diariamente</h1>
+            <p class="lead mb-2">A tecnologia ideal para o seu crescimento financeiro.</p>
+            <p class="text-muted small">Rendimentos previsíveis de <strong class="text-dourado">0,1% a 1,0% ao dia</strong> direto na sua conta.</p>
         </div>
     </header>
 
@@ -30,15 +43,15 @@
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-6">
                 <div class="card card-simulador p-4 bg-white">
-                    <h3 class="text-center mb-4 fw-bold text-secondary">Simulador de Rendimentos</h3>
+                    <h3 class="text-center mb-4 fw-bold text-secondary text-uppercase small tracking-wide">Simulador de Rendimentos</h3>
                     
                     <!-- Campo 1: Valor do Investimento -->
                     <div class="mb-4">
                         <label for="rangeValor" class="form-label fw-semibold d-flex justify-content-between">
                             <span>Valor do Aporte:</span>
-                            <span class="text-primary fw-bold" id="txtValor">R$ 1.000</span>
+                            <span class="text-dourado fw-bold" id="txtValor">R$ 1.000</span>
                         </label>
-                        <input type="range" class="form-range" id="rangeValor" min="300" max="5000" step="50" value="1000">
+                        <input type="range" class="form-range range-dourado" id="rangeValor" min="300" max="5000" step="50" value="1000">
                         <div class="d-flex justify-content-between text-muted small">
                             <span>R$ 300 (Mínimo)</span>
                             <span>R$ 5.000 (Máximo)</span>
@@ -49,9 +62,9 @@
                     <div class="mb-4">
                         <label for="rangeTaxa" class="form-label fw-semibold d-flex justify-content-between">
                             <span>Rendimento Diário Escolhido:</span>
-                            <span class="text-primary fw-bold" id="txtTaxa">0.5%</span>
+                            <span class="text-dourado fw-bold" id="txtTaxa">0.5%</span>
                         </label>
-                        <input type="range" class="form-range" id="rangeTaxa" min="0.1" max="1" step="0.1" value="0.5">
+                        <input type="range" class="form-range range-dourado" id="rangeTaxa" min="0.1" max="1" step="0.1" value="0.5">
                     </div>
 
                     <hr class="my-4">
@@ -90,20 +103,16 @@
             const valor = parseFloat(rangeValor.value);
             const taxaDiaria = parseFloat(rangeTaxa.value) / 100;
 
-            // Formata o texto acima dos controles deslizantes
             txtValor.innerText = `R$ ${valor.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}`;
             txtTaxa.innerText = `${rangeTaxa.value}%`;
 
-            // Realiza os cálculos matemáticos base do rendimento
             const ganhoDia = valor * taxaDiaria;
-            const ganhoMes = ganhoDia * 30; // Estimativa padrão comercial de 30 dias
+            const ganhoMes = ganhoDia * 30;
 
-            // Atualiza os valores visuais na tela
             lucroDiario.innerText = `R$ ${ganhoDia.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
             lucroMensal.innerText = `R$ ${ganhoMes.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
         }
 
-        // Adiciona ouvintes para atualizar os cálculos sempre que o usuário mexer nas barras
         rangeValor.addEventListener('input', calcularSimulacao);
         rangeTaxa.addEventListener('input', calcularSimulacao);
     </script>
